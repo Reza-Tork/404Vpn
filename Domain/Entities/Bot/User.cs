@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.Entities.Vpn;
 
 namespace Domain.Entities.Bot
 {
@@ -17,9 +19,10 @@ namespace Domain.Entities.Bot
         public string? LastName { get; set; }
         public DateTime JoinDate { get; set; }
         public Admin? Admin { get; set; }
-        public bool IsAdmin()
-        {
-            return Admin != null;
-        }
+        public ICollection<UserSubscription> UserSubscriptions { get; set; } = [];
+
+        public bool IsAdmin() => Admin != null;
+
+        public bool HasService() => UserSubscriptions != null && UserSubscriptions.Any();
     }
 }
