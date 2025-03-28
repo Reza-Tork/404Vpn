@@ -13,6 +13,10 @@ namespace Application.Interfaces
     public interface IVpnService
     {
         Task<Result<LoginResponseDTO>> SignInAdmin(LoginRequestDTO loginRequestDTO);
+<<<<<<< HEAD
+=======
+        Task<Result<ApiInfo>> AddApiInfo(ApiInfo apiInfo);
+>>>>>>> Initial Project
         Task<Result<ApiInfo>> GetApiInfo();
     }
 }

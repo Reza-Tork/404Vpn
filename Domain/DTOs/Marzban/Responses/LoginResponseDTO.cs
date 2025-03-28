@@ -14,4 +14,14 @@ namespace Domain.DTOs.Marzban.Responses
 
         private string token_type { get; set; }
     }
+<<<<<<< HEAD
+=======
+
+    public class LoginResponseErrorDTO
+    {
+        [JsonPropertyName("detail")]
+        public string Message { get; set; }
+    }
+
+>>>>>>> Initial Project
 }

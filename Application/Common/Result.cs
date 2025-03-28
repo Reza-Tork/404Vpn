@@ -30,5 +30,12 @@ namespace Application.Common
         {
             return new Result<T>(true, message, data);
         }
+<<<<<<< HEAD
+=======
+        public static Result<T> Failure(string message, T? data = null)
+        {
+            return new Result<T>(false, message, data);
+        }
+>>>>>>> Initial Project
     }
 }
