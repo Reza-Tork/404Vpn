@@ -11,10 +11,7 @@ namespace Domain.Entities.Bot
     {
         public int Id { get; set; }
         public int UserId { get; set; }
-<<<<<<< HEAD
-=======
         public AdminStep Step { get; set; }
->>>>>>> Initial Project
 
         [ForeignKey("UserId")]
         public User User { get; set; }

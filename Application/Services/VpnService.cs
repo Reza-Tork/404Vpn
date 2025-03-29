@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-<<<<<<< HEAD
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
-=======
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
 using Application.Helpers;
->>>>>>> Initial Project
 using Application.Interfaces;
 using Domain.DTOs.Marzban.Requests;
 using Domain.DTOs.Marzban.Responses;
@@ -21,21 +18,8 @@ namespace Application.Services
 {
     public class VpnService : IVpnService
     {
-<<<<<<< HEAD
-        public async Task<Result<LoginResponseDTO>> SignInAdmin(LoginRequestDTO loginRequestDTO)
-        {
-            //Impliment login
-
-
-            return Result<LoginResponseDTO>.Success("Ok", new LoginResponseDTO() { Token = "" });
-        }
-
-        public Task<Result<ApiInfo>> GetApiInfo()
-        {
-
-=======
-        private readonly HttpClient _httpClient;
-        private readonly IBotService _botService;
+        private HttpClient _httpClient;
+        private IBotService _botService;
 
         public VpnService(HttpClient httpClient, IBotService botService)
         {
@@ -70,7 +54,6 @@ namespace Application.Services
         public async Task<Result<ApiInfo>> AddApiInfo(ApiInfo apiInfo)
         {
             throw new NotImplementedException();
->>>>>>> Initial Project
         }
     }
 }
