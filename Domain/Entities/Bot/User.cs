@@ -22,22 +22,16 @@ namespace Domain.Entities.Bot
         public string StepData { get; set; }
         public Wallet Wallet { get; set; }
         public Admin? Admin { get; set; }
-<<<<<<< HEAD
-=======
         public Discount Discount { get; set; }
->>>>>>> Initial Project
         public ICollection<UserSubscription> UserSubscriptions { get; set; } = [];
 
         public bool IsAdmin() => Admin != null;
 
         public bool HasService() => UserSubscriptions != null && UserSubscriptions.Any();
-<<<<<<< HEAD
-=======
     }
 
     public enum Step
     {
         None
->>>>>>> Initial Project
     }
 }

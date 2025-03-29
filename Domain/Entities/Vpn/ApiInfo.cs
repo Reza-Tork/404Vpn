@@ -9,14 +9,9 @@ namespace Domain.Entities.Vpn
     public class ApiInfo
     {
         public int Id { get; set; }
-<<<<<<< HEAD
         public string Token { get; set; }
         public DateTime CreateDate { get; set; }
-=======
         public string Username { get; set; }
         public string Password { get; set; }
-        public string? Token { get; set; }
-        public DateTime CreateDate { get; set; } = DateTime.Now;
->>>>>>> Initial Project
     }
 }
