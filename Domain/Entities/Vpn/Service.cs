@@ -11,10 +11,11 @@ namespace Domain.Entities.Vpn
     {
         public int Id { get; set; }
         public string Title { get; set; }
+        public string Tags { get; set; }
         public int Index { get; set; }
         public int Capacity { get; set; } = -1;
         public bool IsActive { get; set; } = true;
-        public int Price { get; set; }
+        public decimal Price { get; set; }
         public ICollection<UserSubscription> UsersSubscriptions { get; set; } = [];
     }
 }

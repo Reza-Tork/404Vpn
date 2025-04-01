@@ -10,7 +10,7 @@ namespace Domain.Entities.Vpn
     {
         public int Id { get; set; }
         public string Token { get; set; }
-        public DateTime CreateDate { get; set; }
+        public DateTime CreateDate { get; set; } = DateTime.UtcNow;
         public string Username { get; set; }
         public string Password { get; set; }
     }

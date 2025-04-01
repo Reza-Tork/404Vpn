@@ -10,11 +10,11 @@ namespace Domain.DTOs.Marzban.Requests
     public class AddUserRequestDTO
     {
         [JsonPropertyName("data_limit")]
-        public int Bandwidth { get; set; } = 0;
+        public long Bandwidth { get; set; } = 0;
         public string data_limit_reset_strategy { get; set; } = "no_reset";
 
         [JsonPropertyName("expire")]
-        public int ExpireTimestamp { get; set; } = 0;
+        public long ExpireTimestamp { get; set; } = 0;
 
         [JsonPropertyName("inbounds")]
         public Inbounds Service { get; set; }
@@ -39,7 +39,7 @@ namespace Domain.DTOs.Marzban.Requests
 
         public class Vless
         {
-            public string id { get; set; } = Guid.NewGuid().ToString();
+            public string id { get; set; } = Guid.NewGuid().ToString().ToLower();
         }
     }
 }

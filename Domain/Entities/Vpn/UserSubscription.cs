@@ -12,18 +12,24 @@ namespace Domain.Entities.Vpn
     {
         public int Id { get; set; }
 
+        public string Username { get; set; }
+        public int Bandwidth { get; set; }
+        public DateTime ExpireTime { get; set; }
+        public DateTime CreationTime { get; set; } = DateTime.UtcNow;
+        public Status Status { get; set; } = Status.Pending;
+        
         public int UserId { get; set; }
         public User User { get; set; }
-
+        
         public int ServiceId { get; set; }
         public Service Service { get; set; }
 
-        public string Username { get; set; }
-        public double Bandwidth { get; set; }
-        public DateTime ExpireTime { get; set; }
-        public DateTime CreationTime { get; set; }
-        public bool IsSuspended { get; set; } = false;
-
-        public bool IsActive() => ExpireTime > DateTime.UtcNow && !IsSuspended;
+        public bool IsActive() => ExpireTime > DateTime.UtcNow && Status == Status.Active;
+    }
+    public enum Status
+    {
+        Active,
+        Pending,
+        Suspend
     }
 }

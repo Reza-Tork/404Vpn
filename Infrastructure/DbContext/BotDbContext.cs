@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.DbContext
 {
-    public class BotDbContext(DbContextOptions<BotDbContext> options) : Microsoft.EntityFrameworkCore.DbContext(options)
+    public class BotDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Admin> Admins { get; set; }
@@ -17,7 +17,14 @@ namespace Infrastructure.DbContext
         public DbSet<ApiInfo> ApiInfos { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<UserSubscription> UsersSubscriptions { get; set; }
+        public DbSet<Discount> Discounts { get; set; }
+        public DbSet<Factor> Factors { get; set; }
+        public DbSet<Wallet> Wallets { get; set; }
 
+        public BotDbContext(DbContextOptions<BotDbContext> options) : base(options)
+        {
+            
+        }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

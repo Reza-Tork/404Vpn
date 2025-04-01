@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Application.Interfaces;
 using Application.Services;
 using Infrastructure.DbContext;
+using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,13 +21,17 @@ namespace Infrastructure.DI
         {
             string connectionString = configuration.GetConnectionString("Postgres");
 
-            services.AddHttpClient();
+            services.AddHttpClient<IVpnService, VpnService>()
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
             services.AddDbContext<BotDbContext>(options =>
             {
                 options.UseNpgsql(connectionString);
             });
+
+            services.AddScoped<IBotRepository, BotRepository>();
             services.AddScoped<IBotService, BotService>();
+            services.AddScoped<IVpnRepository, VpnRepository>();
             services.AddScoped<IVpnService, VpnService>();
 
             services.AddHttpClient<ITelegramBotClient, TelegramBotClient>((httpClient, sp) =>

@@ -25,10 +25,11 @@ namespace Application.Interfaces
         Task<Result<ICollection<Service>>> GetAllServices();
         #endregion
 
-        Task<Result<UserSubscription>> AddSubscription(long userId, int serviceId, UserSubscription subscription);
-        Task<Result<UserSubscription>> DeleteSubscription(long userId, int subscriptionId);
+        Task<Result<UserSubscription>> AddSubscription(UserSubscription subscription);
+        Task<Result<UserSubscription>> DeleteSubscription(int subscriptionId);
         Task<Result<UserSubscription>> UpdateSubscription(UserSubscription subscription);
-        Task<Result<UserSubscription>> GetSubscription(int subscriptionId);
+        Task<Result<UserSubscription>> GetSubscriptionById(int subscriptionId);
+        Task<Result<UserSubscription>> GetSubscriptionByUserId(int userId);
         Task<Result<ICollection<UserSubscription>>> GetAllSubscriptions(int offset);
     }
 }

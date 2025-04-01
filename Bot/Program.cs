@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json.Serialization;
+using Application.Helpers;
 using Application.Interfaces;
 using Domain.DTOs.Marzban.Requests;
 using Domain.DTOs.Marzban.Responses;
@@ -24,7 +25,6 @@ namespace Bot
                 .ConfigureServices((context, services) =>
                 {
                     services.AddInfrastructureServices(context.Configuration);
-
                 })
                 .Build();
 
@@ -38,6 +38,9 @@ namespace Bot
             {
                 Console.WriteLine($"[+] Token: {result.Data!.Token}");
             }
+
+
+            
             //await botService.Start();
 
             //Console.WriteLine("Bot is running...");
