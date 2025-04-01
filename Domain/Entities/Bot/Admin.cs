@@ -12,6 +12,7 @@ namespace Domain.Entities.Bot
         public int Id { get; set; }
         public int UserId { get; set; }
         public AdminStep Step { get; set; }
+        public string? StepData { get; set; }
 
         [ForeignKey("UserId")]
         public User User { get; set; }
