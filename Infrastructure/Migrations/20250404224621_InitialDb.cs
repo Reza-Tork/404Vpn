@@ -31,6 +31,20 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BotMessages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Command = table.Column<int>(type: "integer", nullable: false),
+                    Message = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BotMessages", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BotSettings",
                 columns: table => new
                 {
@@ -91,7 +105,7 @@ namespace Infrastructure.Migrations
                     LastName = table.Column<string>(type: "text", nullable: true),
                     JoinDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Step = table.Column<int>(type: "integer", nullable: false),
-                    StepData = table.Column<string>(type: "text", nullable: false),
+                    StepData = table.Column<string>(type: "text", nullable: true),
                     DiscountId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
@@ -111,7 +125,8 @@ namespace Infrastructure.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<int>(type: "integer", nullable: false),
-                    Step = table.Column<int>(type: "integer", nullable: false)
+                    Step = table.Column<int>(type: "integer", nullable: false),
+                    StepData = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -153,7 +168,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Username = table.Column<string>(type: "text", nullable: false),
-                    Bandwidth = table.Column<double>(type: "double precision", nullable: false),
+                    Bandwidth = table.Column<int>(type: "integer", nullable: false),
                     ExpireTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
@@ -197,6 +212,22 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "BotMessages",
+                columns: new[] { "Id", "Command", "Message" },
+                values: new object[,]
+                {
+                    { 1, 1, "پیام کامند استارت" },
+                    { 2, 2, "پیام خرید سرویس - مرحله انتخاب سرویس" },
+                    { 3, 3, "پیام تمدید سرویس - مرحله انتخاب سرویس جهت تمدید" },
+                    { 4, 4, "پیام سرویس های من - مرحله نمایش سرویس ها" },
+                    { 5, 5, "حجم اضافه - مرحله وارد کردن حجم" },
+                    { 6, 6, "پیام پلن ها - نمایش تمام پلن ها" },
+                    { 7, 7, "پیام کیف پول - نمایش بالانس" },
+                    { 8, 8, "پیام پشتیبانی - نمایش ایدی اکانت پشتیبانی" },
+                    { 9, 9, "پیام راهنما" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "BotSettings",
                 columns: new[] { "Id", "Key", "Value" },
                 values: new object[,]
@@ -208,12 +239,12 @@ namespace Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "DiscountId", "FirstName", "JoinDate", "LastName", "Step", "StepData", "UserId", "Username" },
-                values: new object[] { 1, null, "Main", new DateTime(2025, 3, 29, 22, 8, 31, 420, DateTimeKind.Utc).AddTicks(4590), "Admin", 0, "", 7880935437L, "MrMorphling" });
+                values: new object[] { 1, null, "Main", new DateTime(2025, 4, 4, 22, 46, 21, 457, DateTimeKind.Utc).AddTicks(8678), "Admin", 0, "", 7880935437L, "MrMorphling" });
 
             migrationBuilder.InsertData(
                 table: "Admins",
-                columns: new[] { "Id", "Step", "UserId" },
-                values: new object[] { 1, 0, 1 });
+                columns: new[] { "Id", "Step", "StepData", "UserId" },
+                values: new object[] { 1, 0, null, 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Admins_UserId",
@@ -256,6 +287,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "ApiInfos");
+
+            migrationBuilder.DropTable(
+                name: "BotMessages");
 
             migrationBuilder.DropTable(
                 name: "BotSettings");

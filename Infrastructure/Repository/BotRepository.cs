@@ -1,29 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
 using Application.Interfaces;
 using Domain.Entities.Bot;
+using Domain.Entities.Enums;
 using Domain.Entities.Vpn;
 using Infrastructure.DbContext;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Infrastructure.Repository
 {
     public class BotRepository : IBotRepository
     {
+        private readonly IMemoryCache cache;
         private readonly BotDbContext dbContext;
-
-        public BotRepository(BotDbContext dbContext)
+        private const string MessagesCacheKey = "BotMessages";
+        private const string SettingsCacheKey = "BotSettings";
+        public BotRepository(BotDbContext dbContext, IMemoryCache cache)
         {
             this.dbContext = dbContext;
+            this.cache = cache;
         }
+
+        #region Settings
         public async Task<Result<BotSetting>> AddSetting(BotSetting setting)
         {
             dbContext.BotSettings.Add(setting);
             await dbContext.SaveChangesAsync();
+
+            cache.Remove(SettingsCacheKey);
+
             return Result<BotSetting>.Success("Ok", setting);
         }
 
@@ -34,6 +46,12 @@ namespace Infrastructure.Repository
             {
                 dbContext.BotSettings.Remove(result.Data!);
                 await dbContext.SaveChangesAsync();
+
+
+                cache.Remove(SettingsCacheKey);
+                cache.Remove($"{SettingsCacheKey}_{result.Data!.Id}");
+                cache.Remove($"{SettingsCacheKey}_{result.Data!.Key}");
+
                 return Result<BotSetting>.Success("Bot setting Successfully removed!");
             }
             else
@@ -42,15 +60,42 @@ namespace Infrastructure.Repository
 
         public async Task<Result<ICollection<BotSetting>>> GetAllSettings()
         {
-            var botSettings = await dbContext.BotSettings.ToListAsync();
-            return Result<ICollection<BotSetting>>.Success("Ok", botSettings);
+            if (cache.TryGetValue(SettingsCacheKey, out ICollection<BotSetting> cachedSettings))
+                return Result<ICollection<BotSetting>>.Success(cachedSettings);
+
+            var botSettings = await dbContext.BotSettings.AsNoTracking().ToListAsync();
+
+            cache.Set(SettingsCacheKey, botSettings, TimeSpan.FromHours(1));
+
+            return Result<ICollection<BotSetting>>.Success(botSettings);
         }
 
         public async Task<Result<BotSetting>> GetSetting(int botSettingId)
         {
-            var result = await dbContext.BotSettings.FirstOrDefaultAsync(x => x.Id == botSettingId);
+            if (cache.TryGetValue($"{SettingsCacheKey}_{botSettingId}", out BotSetting cachedSettings))
+                return Result<BotSetting>.Success(cachedSettings);
+
+
+            var result = await dbContext.BotSettings.AsNoTracking().FirstOrDefaultAsync(x => x.Id == botSettingId);
             if (result != null)
+            {
+                cache.Set($"{SettingsCacheKey}_{botSettingId}", result, TimeSpan.FromHours(1));
                 return Result<BotSetting>.Success("Bot setting founded!", result);
+            }
+            return Result<BotSetting>.Failure("No bot setting not founded!");
+        }
+
+        public async Task<Result<BotSetting>> GetSetting(string settingKey)
+        {
+            if (cache.TryGetValue($"{SettingsCacheKey}_{settingKey}", out BotSetting cachedSettings))
+                return Result<BotSetting>.Success(cachedSettings);
+
+            var result = await dbContext.BotSettings.AsNoTracking().FirstOrDefaultAsync(x => x.Key == settingKey);
+            if (result != null)
+            {
+                cache.Set($"{SettingsCacheKey}_{settingKey}", result, TimeSpan.FromHours(1));
+                return Result<BotSetting>.Success("Bot setting founded!", result);
+            }
             return Result<BotSetting>.Failure("No bot setting not founded!");
         }
 
@@ -58,7 +103,57 @@ namespace Infrastructure.Repository
         {
             dbContext.BotSettings.Update(setting);
             await dbContext.SaveChangesAsync();
+
+            cache.Remove(SettingsCacheKey);
+            cache.Remove($"{SettingsCacheKey}_{setting.Id}");
+            cache.Remove($"{SettingsCacheKey}_{setting.Key}");
+
             return Result<BotSetting>.Success("Api info successfully updated.", setting);
         }
+        #endregion
+
+        #region Messages
+        public async Task<Result<BotMessage>> UpdateBotMessage(int botMessageId, string value)
+        {
+            var botMessage = await dbContext.BotMessages.AsNoTracking().FirstOrDefaultAsync(x => x.Id == botMessageId);
+            if (botMessage != null)
+            {
+                botMessage.Message = value;
+                dbContext.BotMessages.Update(botMessage);
+                await dbContext.SaveChangesAsync();
+
+                cache.Remove(MessagesCacheKey);
+
+                return Result<BotMessage>.Success(botMessage);
+            }
+            return Result<BotMessage>.Failure("Bot message doesn't exist!");
+        }
+
+        public async Task<Result<BotMessage>> UpdateBotMessage(BotCommand command, string value)
+        {
+            var botMessage = await dbContext.BotMessages.AsNoTracking().FirstOrDefaultAsync(x => x.Command == command);
+            if (botMessage != null)
+            {
+                botMessage.Message = value;
+                dbContext.BotMessages.Update(botMessage);
+                await dbContext.SaveChangesAsync();
+
+                cache.Remove(MessagesCacheKey);
+
+                return Result<BotMessage>.Success(botMessage);
+            }
+            return Result<BotMessage>.Failure("Bot message doesn't exist!");
+        }
+        public async Task<Result<ICollection<BotMessage>>> GetAllBotMessages()
+        {
+            if (cache.TryGetValue(MessagesCacheKey, out ICollection<BotMessage> cachedMessages))
+                return Result<ICollection<BotMessage>>.Success(cachedMessages);
+
+            var messages = await dbContext.BotMessages.AsNoTracking().ToListAsync();
+            cache.Set(MessagesCacheKey, messages, TimeSpan.FromHours(1));
+
+            return Result<ICollection<BotMessage>>.Success(messages);
+        }
+        #endregion
     }
 }

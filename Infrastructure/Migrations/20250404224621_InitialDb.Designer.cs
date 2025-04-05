@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(BotDbContext))]
-    [Migration("20250329220831_InitialDb")]
+    [Migration("20250404224621_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -36,6 +36,9 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Step")
                         .HasColumnType("integer");
 
+                    b.Property<string>("StepData")
+                        .HasColumnType("text");
+
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
@@ -52,6 +55,82 @@ namespace Infrastructure.Migrations
                             Id = 1,
                             Step = 0,
                             UserId = 1
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Entities.Bot.BotMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Command")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BotMessages");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Command = 1,
+                            Message = "پیام کامند استارت"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Command = 2,
+                            Message = "پیام خرید سرویس - مرحله انتخاب سرویس"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Command = 3,
+                            Message = "پیام تمدید سرویس - مرحله انتخاب سرویس جهت تمدید"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Command = 4,
+                            Message = "پیام سرویس های من - مرحله نمایش سرویس ها"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Command = 5,
+                            Message = "حجم اضافه - مرحله وارد کردن حجم"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Command = 6,
+                            Message = "پیام پلن ها - نمایش تمام پلن ها"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Command = 7,
+                            Message = "پیام کیف پول - نمایش بالانس"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Command = 8,
+                            Message = "پیام پشتیبانی - نمایش ایدی اکانت پشتیبانی"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Command = 9,
+                            Message = "پیام راهنما"
                         });
                 });
 
@@ -171,7 +250,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("StepData")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<long>("UserId")
@@ -191,7 +269,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 1,
                             FirstName = "Main",
-                            JoinDate = new DateTime(2025, 3, 29, 22, 8, 31, 420, DateTimeKind.Utc).AddTicks(4590),
+                            JoinDate = new DateTime(2025, 4, 4, 22, 46, 21, 457, DateTimeKind.Utc).AddTicks(8678),
                             LastName = "Admin",
                             Step = 0,
                             StepData = "",
@@ -291,8 +369,8 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("Bandwidth")
-                        .HasColumnType("double precision");
+                    b.Property<int>("Bandwidth")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("timestamp with time zone");

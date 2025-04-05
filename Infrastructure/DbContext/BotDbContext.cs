@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Domain.Entities.Bot;
+using Domain.Entities.Enums;
 using Domain.Entities.Vpn;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +21,7 @@ namespace Infrastructure.DbContext
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Factor> Factors { get; set; }
         public DbSet<Wallet> Wallets { get; set; }
+        public DbSet<BotMessage> BotMessages { get; set; }
 
         public BotDbContext(DbContextOptions<BotDbContext> options) : base(options)
         {
@@ -65,6 +67,21 @@ namespace Infrastructure.DbContext
                 UserId = 1,
                 Step = AdminStep.None
             });
+
+            var botMessages = new List<BotMessage>
+            {
+                new BotMessage { Id = (int)BotCommand.Start, Command = BotCommand.Start, Message = "پیام کامند استارت" },
+                new BotMessage { Id = (int)BotCommand.BuyService, Command = BotCommand.BuyService, Message = "پیام خرید سرویس - مرحله انتخاب سرویس" },
+                new BotMessage { Id = (int)BotCommand.RenewService, Command = BotCommand.RenewService, Message = "پیام تمدید سرویس - مرحله انتخاب سرویس جهت تمدید" },
+                new BotMessage { Id = (int)BotCommand.MyServices, Command = BotCommand.MyServices, Message = "پیام سرویس های من - مرحله نمایش سرویس ها" },
+                new BotMessage { Id = (int)BotCommand.ExtraBandwidth, Command = BotCommand.ExtraBandwidth, Message = "حجم اضافه - مرحله وارد کردن حجم" },
+                new BotMessage { Id = (int)BotCommand.Plans, Command = BotCommand.Plans, Message = "پیام پلن ها - نمایش تمام پلن ها" },
+                new BotMessage { Id = (int)BotCommand.Wallet, Command = BotCommand.Wallet, Message = "پیام کیف پول - نمایش بالانس" },
+                new BotMessage { Id = (int)BotCommand.Support, Command = BotCommand.Support, Message = "پیام پشتیبانی - نمایش ایدی اکانت پشتیبانی" },
+                new BotMessage { Id = (int)BotCommand.Help, Command = BotCommand.Help, Message = "پیام راهنما" },
+            };
+
+            modelBuilder.Entity<BotMessage>().HasData(botMessages);
 
             modelBuilder.Entity<UserSubscription>()
             .HasKey(us => us.Id);

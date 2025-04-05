@@ -18,8 +18,8 @@ namespace Domain.Entities.Bot
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public DateTime JoinDate { get; set; } = DateTime.UtcNow;
-        public Step Step { get; set; }
-        public string StepData { get; set; }
+        public Step Step { get; set; } = Step.None;
+        public string? StepData { get; set; }
         public Wallet Wallet { get; set; }
         public Admin? Admin { get; set; }
         public Discount? Discount { get; set; }

@@ -12,7 +12,7 @@ namespace Application.Common
         public string? Message { get; set; }
         public T? Data { get; set; }
 
-        public Result(bool isSuccess, string message, T? data = null)
+        public Result(bool isSuccess, string? message, T? data = null)
         {
             IsSuccess = isSuccess;
             Message = message;
@@ -29,6 +29,10 @@ namespace Application.Common
         public static Result<T> Success(string message, T? data = null)
         {
             return new Result<T>(true, message, data);
+        }
+        public static Result<T> Success(T? data = null)
+        {
+            return new Result<T>(true, null, data);
         }
         public static Result<T> Failure(string message, T? data = null)
         {

@@ -6,26 +6,37 @@ using System.Threading.Tasks;
 using Application.Common;
 using Application.Interfaces;
 using Domain.Entities.Bot;
+using Microsoft.Extensions.DependencyInjection;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace Application.Services
 {
     public class BotService : IBotService
     {
-        public Task<Result<BotSetting>> GetAllSettings()
+        private readonly IBotRepository botRepository;
+        public BotService(
+            IBotRepository botRepository)
         {
-            throw new NotImplementedException();
+            this.botRepository = botRepository;
+        }
+
+        public async Task<Result<ICollection<BotMessage>>> GetAllMessages()
+        {
+            return await botRepository.GetAllBotMessages();
+        }
+
+        public async Task<Result<ICollection<BotSetting>>> GetAllSettings()
+        {
+            return await botRepository.GetAllSettings();
         }
 
         public async Task<Result<BotSetting>> GetSetting(string key)
         {
-            return Result<BotSetting>.Success("Ok", new BotSetting()
-            {
-                Key = "DOMAIN",
-                Value = "https://library98.ir/"
-            });
+            return await botRepository.GetSetting(key);
         }
 
-        public Task Run()
+        public Task<Result<BotMessage>> UpdateMessage(BotMessage message)
         {
             throw new NotImplementedException();
         }

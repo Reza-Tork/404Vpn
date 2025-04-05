@@ -1,0 +1,42 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Application.Common;
+using Domain.Entities.Bot;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Telegram.Bot;
+
+namespace Infrastructure.HostedServices
+{
+    public class BotLifecycleService : IHostedService
+    {
+        private readonly ITelegramBotClient _botClient;
+        private readonly BotConfiguration botConfiguration;
+
+        public BotLifecycleService(
+            ITelegramBotClient botClient,
+            BotConfiguration botConfiguration)
+        {
+            _botClient = botClient;
+            this.botConfiguration = botConfiguration;
+        }
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            var webhookInfo = await _botClient.GetWebhookInfo(cancellationToken);
+            if (webhookInfo.Url != string.Empty)
+                await _botClient.DeleteWebhook(false, cancellationToken);
+
+            await _botClient.SetWebhook($"{botConfiguration.Domain}/webhook", cancellationToken: cancellationToken);
+        }
+
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            var webhookInfo = await _botClient.GetWebhookInfo(cancellationToken);
+            if (webhookInfo.Url != string.Empty)
+                await _botClient.DeleteWebhook(false, cancellationToken);
+        }
+    }
+}

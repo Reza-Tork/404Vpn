@@ -1,14 +1,19 @@
 ﻿using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Application.Helpers;
 using Application.Interfaces;
 using Domain.DTOs.Marzban.Requests;
 using Domain.DTOs.Marzban.Responses;
 using Infrastructure.DI;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
+using Telegram.Bot.Types;
 
 namespace Bot
 {
@@ -16,38 +21,34 @@ namespace Bot
     {
         static async Task Main(string[] args)
         {
-            var host = Host.CreateDefaultBuilder(args)
-                .ConfigureLogging(logging =>
-                {
-                    logging.SetMinimumLevel(LogLevel.Error);
-                    logging.AddFilter("System.Net.Http.HttpClient", LogLevel.None);
-                })
-                .ConfigureServices((context, services) =>
-                {
-                    services.AddInfrastructureServices(context.Configuration);
-                })
-                .Build();
+            var builder = WebApplication.CreateBuilder(args);
 
-            var vpnService = host.Services.GetRequiredService<IVpnService>();
-            var result = await vpnService.SignInAdmin(new LoginRequestDTO()
+            builder.Logging.SetMinimumLevel(LogLevel.Error);
+            builder.Logging.AddFilter("System.Net.Http.HttpClient", LogLevel.None);
+
+            builder.Services.AddInfrastructureServices(builder.Configuration);
+
+            var app = builder.Build();
+
+            app.MapPost("/webhook", async (HttpContext context, [FromKeyedServices("UpdateHandler")] IUpdateHandler updateHandler) =>
             {
-                username = "arman",
-                password = "arman2122"
+                using var reader = new StreamReader(context.Request.Body);
+                var body = await reader.ReadToEndAsync();
+
+                var update = System.Text.Json.JsonSerializer.Deserialize<Update>(body, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                if (update != null)
+                {
+                    await updateHandler.HandleUpdate(update);
+                }
+
+                return Results.Ok();
             });
-            if (result.IsSuccess)
-            {
-                Console.WriteLine($"[+] Token: {result.Data!.Token}");
-            }
 
-
-            
-            //await botService.Start();
-
-            //Console.WriteLine("Bot is running...");
-
-            //await Task.Delay(Timeout.Infinite);
-
-            //botService.Stop();
+            app.Run();
         }
     }
 }

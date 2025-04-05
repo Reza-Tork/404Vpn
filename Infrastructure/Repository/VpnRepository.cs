@@ -36,7 +36,7 @@ namespace Infrastructure.Repository
 
         public async Task<Result<ApiInfo>> GetApiInfo(int apiInfoId)
         {
-            var result = await dbContext.ApiInfos.FirstOrDefaultAsync(x => x.Id == apiInfoId);
+            var result = await dbContext.ApiInfos.AsNoTracking().FirstOrDefaultAsync(x => x.Id == apiInfoId);
             if (result != null)
                 return Result<ApiInfo>.Success("Api info founded!", result);
             return Result<ApiInfo>.Failure("No api info founded!");
@@ -44,7 +44,7 @@ namespace Infrastructure.Repository
 
         public async Task<Result<ICollection<ApiInfo>>> GetAllApiInfos()
         {
-            var apiInfos = await dbContext.ApiInfos.ToListAsync();
+            var apiInfos = await dbContext.ApiInfos.AsNoTracking().ToListAsync();
             return Result<ICollection<ApiInfo>>.Success("Ok", apiInfos);
         }
 
@@ -91,7 +91,7 @@ namespace Infrastructure.Repository
 
         public async Task<Result<Service>> GetService(int serviceId)
         {
-            var result = await dbContext.Services.FirstOrDefaultAsync(x => x.Id == serviceId);
+            var result = await dbContext.Services.AsNoTracking().FirstOrDefaultAsync(x => x.Id == serviceId);
             if (result != null)
                 return Result<Service>.Success("Service founded!", result);
             return Result<Service>.Failure("No service founded!");
@@ -99,7 +99,7 @@ namespace Infrastructure.Repository
 
         public async Task<Result<ICollection<Service>>> GetAllServices()
         {
-            var services = await dbContext.Services.ToListAsync();
+            var services = await dbContext.Services.AsNoTracking().ToListAsync();
             return Result<ICollection<Service>>.Success("Ok", services);
         }
         #endregion
@@ -134,7 +134,7 @@ namespace Infrastructure.Repository
 
         public async Task<Result<UserSubscription>> GetSubscriptionById(int subscriptionId)
         {
-            var result = await dbContext.UsersSubscriptions.FirstOrDefaultAsync(x => x.Id == subscriptionId);
+            var result = await dbContext.UsersSubscriptions.AsNoTracking().FirstOrDefaultAsync(x => x.Id == subscriptionId);
             if (result != null)
                 return Result<UserSubscription>.Success("Service founded!", result);
             return Result<UserSubscription>.Failure("No service founded!");
@@ -142,7 +142,7 @@ namespace Infrastructure.Repository
 
         public async Task<Result<UserSubscription>> GetSubscriptionByUserId(int userId)
         {
-            var result = await dbContext.UsersSubscriptions.FirstOrDefaultAsync(x => x.UserId == userId);
+            var result = await dbContext.UsersSubscriptions.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId);
             if (result != null)
                 return Result<UserSubscription>.Success("Service founded!", result);
             return Result<UserSubscription>.Failure("No service founded!");
@@ -150,7 +150,7 @@ namespace Infrastructure.Repository
 
         public async Task<Result<ICollection<UserSubscription>>> GetAllSubscriptions(int offset)
         {
-            var services = await dbContext.UsersSubscriptions.ToListAsync();
+            var services = await dbContext.UsersSubscriptions.AsNoTracking().ToListAsync();
             return Result<ICollection<UserSubscription>>.Success("Ok", services);
         }
         #endregion
