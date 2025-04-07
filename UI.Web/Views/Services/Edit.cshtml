@@ -1,0 +1,140 @@
+﻿@model Domain.Entities.Vpn.Service
+
+@{
+    ViewData["Title"] = "تغییر سرویس";
+}
+
+
+<div class="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+	<!-- Header -->
+	<div class="mb-8 text-center">
+		<h1 class="text-3xl font-bold text-gray-900 mb-2">ساخت سرویس</h1>
+		<p class="text-gray-500">لطفا مشخصات سرویس را با دقت وارد کنید</p>
+	</div>
+
+	<!-- Form Container -->
+	<div class="bg-white rounded-xl shadow-lg overflow-hidden">
+		<div class="border-b border-gray-200">
+			<nav class="flex -mb-px">
+				<a href="#" class="w-full py-4 px-1 text-center border-b-2 border-indigo-500 font-medium text-sm text-indigo-600">
+					<i class="fas fa-cog mr-2"></i> مشخصات پایه
+				</a>
+			</nav>
+		</div>
+
+		<!-- Form Content -->
+		<div class="p-6">
+			<form asp-action="Edit">
+				<input type="hidden" asp-for="Id" />
+				<div class="mb-8">
+					<div class="flex items-center mb-4">
+						<div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 ml-3">
+							<i class="fas fa-tag"></i>
+						</div>
+						<h2 class="ml-3 text-lg font-medium text-gray-900">نام سرویس</h2>
+					</div>
+
+					<div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+						<div>
+							<div class="mt-1 relative rounded-md shadow-sm">
+								<input type="text" asp-for="Title" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-7 pl-12 py-3 sm:text-sm border-gray-300 rounded-lg" placeholder="برای مثال: آلمان پرسرعت 1">
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="mb-8">
+					<div class="flex items-center mb-4">
+						<div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 ml-3">
+							<i class="fas fa-dollar-sign"></i>
+						</div>
+						<h2 class="ml-3 text-lg font-medium text-gray-900">قیمت ماهیانه</h2>
+					</div>
+
+					<div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+						<div>
+							<div class="mt-1 relative rounded-md shadow-sm">
+								<div class="absolute inset-y-0 left-0 flex items-center">
+									<span class="text-gray-500 sm:text-sm ml-3">تومان</span>
+								</div>
+								<input type="number" asp-for="Price" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-7 pl-12 py-3 sm:text-sm border-gray-300 rounded-lg" placeholder="قیمت به تومان">
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Features -->
+				<div class="mb-8">
+					<div class="flex items-center mb-4">
+						<div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 ml-3">
+							<i class="fas fa-gear"></i>
+						</div>
+						<h2 class="ml-3 text-lg font-medium text-gray-900">دیگر مشخصات</h2>
+					</div>
+
+					<div class="grid grid-cols-1 gap-4 sm:grid-cols-1">
+						<div>
+							<div class="mt-1 relative rounded-md shadow-sm">
+								<input type="number" asp-for="Capacity" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-20 py-3 sm:text-sm border-gray-300 rounded-lg" placeholder="-1 برای نامحدود ظرفیت">
+
+								<div class="absolute inset-y-0 right-0 flex items-center">
+									<span class="text-gray-500 sm:text-sm mr-3">ظرفیت</span>
+								</div>
+							</div>
+						</div>
+						<div>
+							<div class="mt-1 relative rounded-md shadow-sm">
+								<input type="number" asp-for="Index" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-20 py-3 sm:text-sm border-gray-300 rounded-lg" placeholder="شروع از 0">
+
+								<div class="absolute inset-y-0 right-0 flex items-center">
+									<span class="text-gray-500 sm:text-sm mr-3">جایگاه</span>
+								</div>
+							</div>
+						</div>
+						<div>
+							<div class="mt-1 relative rounded-md shadow-sm">
+								<input type="text" asp-for="Tags" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-20 py-3 sm:text-sm border-gray-300 rounded-lg" placeholder="هر تگ با , جدا شود" dir="ltr">
+
+								<div class="absolute inset-y-0 right-0 flex items-center">
+									<span class="text-gray-500 sm:text-sm mr-3">تگ ها</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Plan Status -->
+				<div class="mb-8">
+					<div class="flex items-center mb-4">
+						<div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 ml-3">
+							<i class="fas fa-power-off"></i>
+						</div>
+						<h2 class="ml-3 text-lg font-medium text-gray-900">وضعیت پلن</h2>
+					</div>
+
+					<div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+						<div>
+							<label class="block text-sm font-medium text-gray-700 mb-2">حالت سرویس (فعال/ غیرفعال)</label>
+							<input asp-for="IsActive" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+
+						</div>
+					</div>
+				</div>
+
+				<!-- Form Actions -->
+				<div class="mt-8 pt-5 border-t border-gray-200 flex justify-center">
+					<a asp-action="Index" class="bg-white py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+						لغو و بازگشت
+					</a>
+					<button type="submit" class="mr-3 inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+						<i class="fas fa-save ml-2"></i> ذخیره سرویس
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

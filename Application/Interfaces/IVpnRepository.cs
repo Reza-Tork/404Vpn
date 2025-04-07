@@ -29,7 +29,7 @@ namespace Application.Interfaces
         Task<Result<UserSubscription>> DeleteSubscription(int subscriptionId);
         Task<Result<UserSubscription>> UpdateSubscription(UserSubscription subscription);
         Task<Result<UserSubscription>> GetSubscriptionById(int subscriptionId);
-        Task<Result<UserSubscription>> GetSubscriptionByUserId(int userId);
+        Task<Result<ICollection<UserSubscription>>> GetSubscriptionsByUserId(int userId);
         Task<Result<ICollection<UserSubscription>>> GetAllSubscriptions(int offset);
     }
 }

@@ -1,0 +1,134 @@
+﻿@model IEnumerable<Domain.Entities.Vpn.Service>
+
+@{
+    ViewData["Title"] = "سرویس ها";
+}
+
+
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow-md p-6 flex items-center">
+        <div class="bg-blue-100 p-3 rounded-full ml-4">
+            <i class="fas fa-server text-blue-600 text-xl"></i>
+        </div>
+        <div>
+            <p class="text-gray-500 text-md">تمام سرویس ها</p>
+            <h3 class="text-2xl font-bold">@Model.Count()</h3>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-md p-6 flex items-center">
+        <div class="bg-blue-100 p-3 rounded-full ml-4">
+            <i class="fas fa-server text-blue-600 text-xl"></i>
+        </div>
+        <div>
+            <p class="text-gray-500 text-md">کل خرید ها</p>
+            <h3 class="text-2xl font-bold">@Model.Count()</h3>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-md p-6 flex items-center">
+        <div class="bg-blue-100 p-3 rounded-full ml-4">
+            <i class="fas fa-server text-blue-600 text-xl"></i>
+        </div>
+        <div>
+            <p class="text-gray-500 text-md">درآمد ماهیانه</p>
+            <h3 class="text-2xl font-bold">@Model.Count() تومان</h3>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-md p-6 flex items-center">
+        <div class="bg-blue-100 p-3 rounded-full ml-4">
+            <i class="fas fa-server text-blue-600 text-xl"></i>
+        </div>
+        <div>
+            <p class="text-gray-500 text-md">سرویس محبوب</p>
+            <h3 class="text-2xl font-bold">@Model.FirstOrDefault()?.Title</h3>
+        </div>
+    </div>
+</div>
+
+<!-- Plans Table -->
+<div class="bg-white rounded-xl shadow-md overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h2 class="text-xl font-semibold text-gray-800">مدیریت سرویس ها</h2>
+        <a class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg flex items-center text-white" asp-action="Create">
+            <i class="fas fa-plus ml-2"></i> افزودن سرویس
+        </a>
+    </div>
+
+    <div class="overflow-x-auto custom-scrollbar">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 tracking-wider">عنوان سرویس</th>
+                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 tracking-wider">تگ ها</th>
+                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 tracking-wider">جایگاه</th>
+                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 tracking-wider">ظرفیت</th>
+                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 tracking-wider">وضعیت</th>
+                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 tracking-wider">قیمت</th>
+                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 tracking-wider">تنظیمات</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <!-- Basic Plan -->
+                @foreach (var item in Model)
+                {
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex">
+                                <div class="font-medium text-gray-900">@Html.DisplayFor(modelItem => item.Title)</div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @if(item.Tags.Contains(","))
+                            {
+                                @foreach (var tag in item.Tags.Split(','))
+                                {
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">@tag</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">@item.Tags</span>
+                            }
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="font-semibold">@item.Index</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @Html.DisplayFor(modelItem => item.Capacity)
+                        </td>
+                        <td class="px-6 py-4 whitespace-wrap">
+                            @switch(item.IsActive)
+                            {
+                                case true:
+                                    {
+                                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">فعال</span>
+                                    }
+                                    break;
+                                case false:
+                                    {
+                                        <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">غیرفعال</span>
+                                    }
+                                    break;
+                            }
+                            
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="font-semibold">@item.Price.ToString("##,#") تومان</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a class="text-indigo-600 hover:text-indigo-900 mr-3" asp-action="Edit" asp-route-id="@item.Id">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a class="text-red-600 hover:text-red-900" asp-action="Delete" asp-route-id="@item.Id">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

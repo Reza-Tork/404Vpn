@@ -1,0 +1,39 @@
+﻿.gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.feature-chip {
+    transition: all 0.2s ease;
+}
+
+    .feature-chip:hover {
+        transform: translateY(2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+.toggle-checkbox:checked {
+    left: 0;
+    border-color: #667eea;
+}
+
+    .toggle-checkbox:checked + .toggle-label {
+        background-color: #667eea;
+    }
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(10px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}

@@ -1,0 +1,63 @@
+﻿@model Domain.Entities.Bot.BotSetting
+
+@{
+    ViewData["Title"] = "افزودن تنظیمات";
+}
+
+<div class="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+	<!-- Header -->
+	<div class="mb-8 text-center">
+		<h1 class="text-3xl font-bold text-gray-900 mb-2">ساخت تنظیمات</h1>
+	</div>
+
+	<!-- Form Container -->
+	<div class="bg-white rounded-xl shadow-lg overflow-hidden">
+		<div class="p-6">
+			<form asp-action="Create">
+				<div class="mb-8">
+					<div class="flex items-center mb-4">
+						<div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 text-indigo-600 ml-3">
+							<i class="fas fa-gear"></i>
+						</div>
+						<h2 class="ml-3 text-lg font-medium text-gray-900">مشخصات</h2>
+					</div>
+
+					<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+						<div>
+							<div class="mt-1 relative rounded-md shadow-sm">
+								<input type="text" asp-for="Key" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 py-3 sm:text-sm border-gray-300 rounded-lg" dir="ltr">
+
+								<div class="absolute inset-y-0 right-0 flex items-center">
+									<span class="text-gray-500 sm:text-sm mr-3">کلید</span>
+								</div>
+							</div>
+						</div>
+						<div>
+							<div class="mt-1 relative rounded-md shadow-sm">
+								<input type="text" asp-for="Value" class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 py-3 sm:text-sm border-gray-300 rounded-lg" dir="ltr">
+
+								<div class="absolute inset-y-0 right-0 flex items-center">
+									<span class="text-gray-500 sm:text-sm mr-3">مقدار</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Form Actions -->
+				<div class="mt-8 pt-5 border-t border-gray-200 flex justify-center">
+					<a asp-action="Index" class="bg-white py-2 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+						لغو و بازگشت
+					</a>
+					<button type="submit" class="mr-3 inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+						<i class="fas fa-save ml-2"></i> ذخیره تنظیمات
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -15,7 +15,7 @@ namespace Domain.Entities.Vpn
         public int Index { get; set; }
         public int Capacity { get; set; } = -1;
         public bool IsActive { get; set; } = true;
-        public decimal Price { get; set; }
+        public long Price { get; set; }
         public ICollection<UserSubscription> UsersSubscriptions { get; set; } = [];
     }
 }

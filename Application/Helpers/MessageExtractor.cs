@@ -20,6 +20,12 @@ namespace Application.Helpers
             { "💰 کیف پول", BotCommand.Wallet },
             { "📞 پشتیبانی", BotCommand.Support },
             { "🔗 راهنمای اتصال", BotCommand.Help },
+            { "⚙️ پنل مدیریت", BotCommand.AdminPanel },
+        };
+        private static Dictionary<string, BotCommand> AdminCommands = new()
+        {
+            { "GetAllServices", BotCommand.AdminGetServices },
+            { "AddService", BotCommand.AdminAddService },
         };
         public static bool IsCommand(this string inputText, out BotCommand command)
         {
@@ -30,6 +36,20 @@ namespace Application.Helpers
             }
             command = default;
             return false;
+        }
+        public static bool IsAdminCommand(this string inputText, out BotCommand command)
+        {
+            if (AdminCommands.TryGetValue(inputText, out BotCommand value))
+            {
+                command = value;
+                return true;
+            }
+            command = default;
+            return false;
+        }
+        public static string GetText(BotCommand command)
+        {
+            return BotCommands.FirstOrDefault(x => x.Value == command).Key;
         }
     }
 }
