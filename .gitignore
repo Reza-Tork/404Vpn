@@ -362,3 +362,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /Bot/appsettings.json
+/UI.Web/wwwroot/lib/font-awesome/svgs
+/UI.Web/wwwroot/lib/bootstrap
+/UI.Web/appsettings.json
