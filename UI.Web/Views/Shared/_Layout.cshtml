@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - پنل مدیریت</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="~/css/site.css">
+    <link rel="stylesheet" href="~/UI.Web.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-indigo-700 text-white shadow-lg">
+            <div class="container mx-auto px-4 py-6">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-3 ml-3">
+                            <i class="fas fa-shield-alt text-2xl ml-2"></i>
+                            <h1 class="text-2xl font-bold ml-2">مدیریت ربات</h1>
+                        </div>
+                        <a class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg flex items-center" asp-controller="Home" asp-action="Index">
+                            <i class="fas fa-house ml-2"></i> خانه
+                        </a>
+                        <a class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg flex items-center" asp-controller="Services" asp-action="Index">
+                            <i class="fas fa-globe ml-2"></i> سرویس ها
+                        </a>
+                        <a class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg flex items-center" asp-controller="BotSettings" asp-action="Index">
+                            <i class="fas fa-gear ml-2"></i> تنظیمات ربات
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8">
+            @RenderBody()
+        </main>
+    </div>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -140,17 +140,27 @@ namespace Infrastructure.Repository
             return Result<UserSubscription>.Failure("No service founded!");
         }
 
-        public async Task<Result<UserSubscription>> GetSubscriptionByUserId(int userId)
+        public async Task<Result<ICollection<UserSubscription>>> GetSubscriptionsByUserId(int userId)
         {
-            var result = await dbContext.UsersSubscriptions.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId);
+            var result = await dbContext.UsersSubscriptions
+                .Include(x => x.Service)
+                .AsNoTracking()
+                .Where(x => x.UserId == userId)
+                .ToListAsync();
+
             if (result != null)
-                return Result<UserSubscription>.Success("Service founded!", result);
-            return Result<UserSubscription>.Failure("No service founded!");
+                return Result<ICollection<UserSubscription>>.Success("Service founded!", result);
+            return Result<ICollection<UserSubscription>>.Failure("No service founded!");
         }
 
         public async Task<Result<ICollection<UserSubscription>>> GetAllSubscriptions(int offset)
         {
-            var services = await dbContext.UsersSubscriptions.AsNoTracking().ToListAsync();
+            var services = await dbContext.UsersSubscriptions
+                .AsNoTracking()
+                .Skip(offset)
+                .Take(20)
+                .ToListAsync();
+
             return Result<ICollection<UserSubscription>>.Success("Ok", services);
         }
         #endregion

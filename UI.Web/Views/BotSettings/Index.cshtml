@@ -1,0 +1,53 @@
+﻿@model IEnumerable<Domain.Entities.Bot.BotSetting>
+
+@{
+    ViewData["Title"] = "تنظیمات";
+}
+
+
+<!-- Plans Table -->
+<div class="bg-white rounded-xl shadow-md overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+        <h2 class="text-xl font-medium text-gray-800">
+            <i class="fas fa-cog ml-2 text-indigo-600"></i> مدیریت مقادیر ربات
+        </h2>
+        <a class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg flex items-center text-white" asp-action="Create">
+            <i class="fas fa-plus ml-2"></i> افزودن
+        </a>
+    </div>
+
+    <div class="overflow-x-auto custom-scrollbar">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 tracking-wider">کلید</th>
+                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 tracking-wider">مقدار</th>
+                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 tracking-wider">عملیات</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                @foreach (var item in Model)
+                {
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex">
+                                <div class="font-medium text-gray-900">@Html.DisplayFor(modelItem => item.Key)</div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="font-semibold" dir="ltr">@Html.DisplayFor(modelItem => item.Value)</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a class="text-indigo-600 hover:text-indigo-900 mr-3" asp-action="Edit" asp-route-id="@item.Id">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a class="text-red-600 hover:text-red-900" asp-action="Delete" asp-route-id="@item.Id">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

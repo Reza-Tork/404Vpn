@@ -47,8 +47,6 @@ namespace Infrastructure.DI
             services.AddKeyedScoped<IUpdateHandler, MessageHandler>("MessageHandler");
             services.AddKeyedScoped<IUpdateHandler, CallbackQueryHandler>("CallbackQueryHandler");
 
-            services.AddHostedService<BotLifecycleService>();
-
             services.AddHttpClient<ITelegramBotClient, TelegramBotClient>((httpClient, sp) =>
                 new TelegramBotClient(botSettings.BotToken, httpClient)
             );

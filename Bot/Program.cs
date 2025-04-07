@@ -5,7 +5,9 @@ using Application.Helpers;
 using Application.Interfaces;
 using Domain.DTOs.Marzban.Requests;
 using Domain.DTOs.Marzban.Responses;
+using Domain.Entities.Vpn;
 using Infrastructure.DI;
+using Infrastructure.HostedServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +29,8 @@ namespace Bot
             builder.Logging.AddFilter("System.Net.Http.HttpClient", LogLevel.None);
 
             builder.Services.AddInfrastructureServices(builder.Configuration);
+
+            builder.Services.AddHostedService<BotLifecycleService>();
 
             var app = builder.Build();
 

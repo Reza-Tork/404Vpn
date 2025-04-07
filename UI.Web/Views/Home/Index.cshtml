@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "صفحه اصلی";
+}
+
+<div class="max-w-4xl mx-auto text-center py-12 px-6 sm:py-16 sm:px-8 lg:px-12">
+    <div class="animate-fade-in" style="animation-delay: 0.2s;">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6">
+            خوش آمدید</span>!
+        </h1>
+        <p class="text-lg sm:text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+            به مدیریت پنل فروش VPN خوش آمدید
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
+        <div class="animate-fade-in bg-white rounded-xl shadow-md p-6 card-hover transition-all" style="animation-delay: 0.4s;">
+            <div class="text-indigo-500 mb-4">
+                <i class="fas fa-globe text-4xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-3">سرویس ها</h3>
+            <p class="text-gray-600 mb-4">سرویس هاتون رو اینجا میتونید مدیریت کنید</p>
+            <a asp-controller="Services" asp-action="Index" class="inline-flex items-center px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-all">
+                <i class="fas fa-arrow-right ml-2"></i> مدیریت سرویس ها
+            </a>
+        </div>
+        <div class="animate-fade-in bg-white rounded-xl shadow-md p-6 card-hover transition-all" style="animation-delay: 0.4s;">
+            <div class="text-indigo-500 mb-4">
+                <i class="fas fa-gear text-4xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-3">تنظیمات</h3>
+            <p class="text-gray-600 mb-4">مقادیر ضروری ثابت ربات رو اینجا میتونید تغییر بدید</p>
+            <a asp-controller="Services" asp-action="Index" class="inline-flex items-center px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-all">
+                <i class="fas fa-arrow-right ml-2"></i> مدیریت تنظیمات
+            </a>
+        </div>
+    </div>
+</div>

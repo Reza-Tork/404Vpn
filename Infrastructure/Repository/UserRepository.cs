@@ -48,7 +48,12 @@ namespace Infrastructure.Repository
 
         public async Task<Result<User>> GetUserById(long userId)
         {
-            var result = await dbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId);
+            var result = await dbContext.Users
+                .Include(x => x.Admin)
+                .Include(x => x.Wallet)
+                .Include(x => x.Discount)
+                .AsNoTracking().FirstOrDefaultAsync(x => x.UserId == userId);
+
             if (result != null)
                 return Result<User>.Success(result);
             return Result<User>.Failure("No api info founded!");

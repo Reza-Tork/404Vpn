@@ -79,6 +79,7 @@ namespace Infrastructure.DbContext
                 new BotMessage { Id = (int)BotCommand.Wallet, Command = BotCommand.Wallet, Message = "پیام کیف پول - نمایش بالانس" },
                 new BotMessage { Id = (int)BotCommand.Support, Command = BotCommand.Support, Message = "پیام پشتیبانی - نمایش ایدی اکانت پشتیبانی" },
                 new BotMessage { Id = (int)BotCommand.Help, Command = BotCommand.Help, Message = "پیام راهنما" },
+                new BotMessage { Id = (int)BotCommand.AdminPanel, Command = BotCommand.AdminPanel, Message = "به پنل مدیر خوش آمدید" },
             };
 
             modelBuilder.Entity<BotMessage>().HasData(botMessages);

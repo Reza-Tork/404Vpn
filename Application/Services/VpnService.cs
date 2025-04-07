@@ -108,14 +108,14 @@ namespace Application.Services
             return await _vpnRepository.AddApiInfo(apiInfo);
         }
 
-        public Task<Result<UserSubscription>> GetSubscription(int subId)
+        public async Task<Result<UserSubscription>> GetSubscription(int subId)
         {
-            throw new NotImplementedException();
+            return await _vpnRepository.GetSubscriptionById(subId);
         }
 
-        public Task<Result<ICollection<UserSubscription>>> GetUserSubscriptions(int userId)
+        public async Task<Result<ICollection<UserSubscription>>> GetUserSubscriptions(int userId)
         {
-            throw new NotImplementedException();
+            return await _vpnRepository.GetSubscriptionsByUserId(userId);
         }
 
         public Task<Result<ICollection<UserSubscription>>> GetAllSubscriptions(int offset)
