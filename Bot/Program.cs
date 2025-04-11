@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
+using Telegram.Bot.Requests.Abstractions;
 using Telegram.Bot.Types;
 
 namespace Bot
@@ -31,19 +32,13 @@ namespace Bot
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
             builder.Services.AddHostedService<BotLifecycleService>();
+            builder.Services.ConfigureTelegramBot<Microsoft.AspNetCore.Http.Json.JsonOptions>(opt => opt.SerializerOptions);
 
             var app = builder.Build();
 
-            app.MapPost("/webhook", async (HttpContext context, [FromKeyedServices("UpdateHandler")] IUpdateHandler updateHandler) =>
+            app.MapPost("/webhook", async (HttpContext context, [FromKeyedServices("UpdateHandler")] IUpdateHandler updateHandler, ILogger<Program> logger, Update update) =>
             {
-                using var reader = new StreamReader(context.Request.Body);
-                var body = await reader.ReadToEndAsync();
-
-                var update = System.Text.Json.JsonSerializer.Deserialize<Update>(body, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
+                logger.LogInformation($"Update received: {update.Type}");
                 if (update != null)
                 {
                     await updateHandler.HandleUpdate(update);

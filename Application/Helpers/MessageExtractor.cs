@@ -20,12 +20,18 @@ namespace Application.Helpers
             { "💰 کیف پول", BotCommand.Wallet },
             { "📞 پشتیبانی", BotCommand.Support },
             { "🔗 راهنمای اتصال", BotCommand.Help },
-            { "⚙️ پنل مدیریت", BotCommand.AdminPanel },
+            { "🔙 بازگشت به منوی اصلی", BotCommand.MainMenu }
         };
-        private static Dictionary<string, BotCommand> AdminCommands = new()
+        private static Dictionary<string, BotCommand> InlineBotCommands = new()
         {
-            { "GetAllServices", BotCommand.AdminGetServices },
-            { "AddService", BotCommand.AdminAddService },
+            { "MyServiceDetails", BotCommand.MyServiceDetails },
+            { "BuyBandwidth", BotCommand.BuyBandwidth },
+            { "RenewMyService", BotCommand.RenewMyService },
+            { "ChargeWallet", BotCommand.ChargeWallet },
+            { "PaymentMethod", BotCommand.PaymentMethod },
+            { "CardToCard", BotCommand.CardToCard },
+            { "Factor", BotCommand.Factor },
+
         };
         public static bool IsCommand(this string inputText, out BotCommand command)
         {
@@ -37,19 +43,25 @@ namespace Application.Helpers
             command = default;
             return false;
         }
-        public static bool IsAdminCommand(this string inputText, out BotCommand command)
+
+        public static bool IsInlineCommand(this string inputText, out BotCommand inlineCommand)
         {
-            if (AdminCommands.TryGetValue(inputText, out BotCommand value))
+            if (InlineBotCommands.TryGetValue(inputText, out BotCommand value))
             {
-                command = value;
+                inlineCommand = value;
                 return true;
             }
-            command = default;
+            inlineCommand = default;
             return false;
         }
+
         public static string GetText(BotCommand command)
         {
             return BotCommands.FirstOrDefault(x => x.Value == command).Key;
+        }
+        public static string GetCallbackData(BotCommand command)
+        {
+            return InlineBotCommands.FirstOrDefault(x => x.Value == command).Key;
         }
     }
 }

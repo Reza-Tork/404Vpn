@@ -21,5 +21,10 @@ namespace Application.Interfaces
         Task<Result<BotMessage>> UpdateBotMessage(int botMessageId, string value);
         Task<Result<BotMessage>> UpdateBotMessage(BotCommand command, string value);
         Task<Result<ICollection<BotMessage>>> GetAllBotMessages();
+
+        Task<Result<Factor>> CreateFactor(Factor factor);
+        Task<Result<Factor>> UpdateFactor(Factor factor);
+        Task<Result<Factor>> DeleteFactor(Guid factorId);
+        Task<Result<Factor>> GetFactor(Guid factorId);
     }
 }

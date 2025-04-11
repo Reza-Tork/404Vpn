@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +33,26 @@ namespace Application.Helpers
             }
 
             return string.Join("&", keyValuePairs);
+        }
+        public static string ToPersianDate(this DateTime date)
+        {
+            TimeZoneInfo iranTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Iran Standard Time");
+            DateTime iranTime = TimeZoneInfo.ConvertTime(date, iranTimeZone);
+
+            PersianCalendar pc = new PersianCalendar();
+
+            string[] persianDays = { "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه", "شنبه" };
+            string[] persianMonths = {
+            "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+            "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
+        };
+
+            string dayOfWeek = persianDays[(int)pc.GetDayOfWeek(iranTime)];
+            int day = pc.GetDayOfMonth(iranTime);
+            string month = persianMonths[pc.GetMonth(iranTime) - 1];
+            int hour = iranTime.Hour;
+            int minute = iranTime.Minute;
+            return $"{dayOfWeek} {day} {month} ساعت {hour:D2}:{minute:D2}";
         }
     }
 }

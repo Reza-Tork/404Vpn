@@ -8,6 +8,7 @@ using Domain.Entities.Bot;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
+using Telegram.Bot.Types.Enums;
 
 namespace Infrastructure.HostedServices
 {
@@ -29,7 +30,7 @@ namespace Infrastructure.HostedServices
             if (webhookInfo.Url != string.Empty)
                 await _botClient.DeleteWebhook(false, cancellationToken);
 
-            await _botClient.SetWebhook($"{botConfiguration.Domain}/webhook", cancellationToken: cancellationToken);
+            await _botClient.SetWebhook($"{botConfiguration.Domain}/webhook",allowedUpdates: [UpdateType.Message, UpdateType.CallbackQuery], cancellationToken: cancellationToken);
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)

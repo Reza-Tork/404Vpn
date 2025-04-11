@@ -13,7 +13,8 @@ namespace Application.Interfaces
         Task<Result<User>> AddUser(User user);
         Task<Result<User>> UpdateUser(User user);
         Task<Result<User>> DeleteUser(User user);
-        Task<Result<User>> GetUserById(long userId);
+        Task<Result<User>> GetUserById(int userId);
+        Task<Result<User>> GetUserByUserId(long userId);
         Task<Result<ICollection<User>>> GetAllUsers();
     }
 }

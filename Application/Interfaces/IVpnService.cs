@@ -21,5 +21,11 @@ namespace Application.Interfaces
         Task<Result<UserSubscription>> GetSubscription(int subId);
         Task<Result<ICollection<UserSubscription>>> GetUserSubscriptions(int userId);
         Task<Result<ICollection<UserSubscription>>> GetAllSubscriptions(int offset);
+
+        Task<Result<Service>> AddService(Service service);
+        Task<Result<Service>> DeleteService(int serviceId);
+        Task<Result<Service>> UpdateService(Service service);
+        Task<Result<Service>> GetService(int serviceId);
+        Task<Result<ICollection<Service>>> GetAllServices();
     }
 }

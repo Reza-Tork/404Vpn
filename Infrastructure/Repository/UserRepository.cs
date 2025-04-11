@@ -29,7 +29,7 @@ namespace Infrastructure.Repository
 
         public async Task<Result<User>> DeleteUser(User user)
         {
-            var result = await GetUserById(user.UserId);
+            var result = await GetUserByUserId(user.UserId);
             if (result.IsSuccess)
             {
                 dbContext.Users.Remove(result.Data!);
@@ -46,7 +46,20 @@ namespace Infrastructure.Repository
             return Result<ICollection<User>>.Success(users);
         }
 
-        public async Task<Result<User>> GetUserById(long userId)
+        public async Task<Result<User>> GetUserById(int userId)
+        {
+            var result = await dbContext.Users
+                .Include(x => x.Admin)
+                .Include(x => x.Wallet)
+                .Include(x => x.Discount)
+                .AsNoTracking().FirstOrDefaultAsync(x => x.Id == userId);
+
+            if (result != null)
+                return Result<User>.Success(result);
+            return Result<User>.Failure("No api info founded!");
+        }
+
+        public async Task<Result<User>> GetUserByUserId(long userId)
         {
             var result = await dbContext.Users
                 .Include(x => x.Admin)
@@ -56,7 +69,7 @@ namespace Infrastructure.Repository
 
             if (result != null)
                 return Result<User>.Success(result);
-            return Result<User>.Failure("No api info founded!");
+            return Result<User>.Failure("No user founded!");
         }
 
         public async Task<Result<User>> UpdateUser(User user)

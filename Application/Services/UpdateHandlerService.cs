@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Application.Helpers.Handlers;
 using Application.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -14,14 +15,17 @@ namespace Application.Services
     public class UpdateHandlerService : IUpdateHandler
     {
         private readonly IUserService userService;
+        private readonly ILogger<UpdateHandlerService> logger;
         private readonly IUpdateHandler messageHandler;
         private readonly IUpdateHandler callbackHandler;
         public UpdateHandlerService(
             IUserService userService,
+            ILogger<UpdateHandlerService> logger,
             [FromKeyedServices("MessageHandler")] IUpdateHandler messageHandler,
             [FromKeyedServices("CallbackQueryHandler")] IUpdateHandler callbackHandler)
         {
             this.userService = userService;
+            this.logger = logger;
             this.messageHandler = messageHandler;
             this.callbackHandler = callbackHandler;
         }
@@ -31,13 +35,13 @@ namespace Application.Services
             {
                 case UpdateType.Message:
                     {
-                        var user = await userService.CheckUserExists(update.Message.From);
+                        logger.LogInformation("Update type is message");
                         await messageHandler.HandleUpdate(update);
                     }
                     break;
                 case UpdateType.CallbackQuery:
                     {
-                        var user = await userService.CheckUserExists(update.CallbackQuery.From);
+                        logger.LogInformation("Update type is callbackquery");
                         await callbackHandler.HandleUpdate(update);
                     }
                     break;

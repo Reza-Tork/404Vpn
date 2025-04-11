@@ -24,6 +24,7 @@ namespace Domain.Entities.Bot
         public Admin? Admin { get; set; }
         public Discount? Discount { get; set; }
         public ICollection<UserSubscription> UserSubscriptions { get; set; } = [];
+        public ICollection<Factor> UserFactors { get; set; } = [];
 
         public bool IsAdmin() => Admin != null;
 
@@ -32,6 +33,9 @@ namespace Domain.Entities.Bot
 
     public enum Step
     {
-        None
+        None,
+        ExtraBandwidth,
+        ChargeWallet,
+        ReceiptSending
     }
 }

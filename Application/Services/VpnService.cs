@@ -118,9 +118,35 @@ namespace Application.Services
             return await _vpnRepository.GetSubscriptionsByUserId(userId);
         }
 
-        public Task<Result<ICollection<UserSubscription>>> GetAllSubscriptions(int offset)
+        public async Task<Result<ICollection<UserSubscription>>> GetAllSubscriptions(int offset)
         {
-            throw new NotImplementedException();
+            return await _vpnRepository.GetAllSubscriptions(offset);
+        }
+
+
+        public async Task<Result<Service>> AddService(Service service)
+        {
+            return await _vpnRepository.AddService(service);
+        }
+
+        public async Task<Result<Service>> DeleteService(int serviceId)
+        {
+            return await _vpnRepository.DeleteService(serviceId);
+        }
+
+        public async Task<Result<Service>> UpdateService(Service service)
+        {
+            return await _vpnRepository.UpdateService(service);
+        }
+
+        public async Task<Result<Service>> GetService(int serviceId)
+        {
+            return await _vpnRepository.GetService(serviceId);
+        }
+
+        public async Task<Result<ICollection<Service>>> GetAllServices()
+        {
+            return await _vpnRepository.GetAllServices();
         }
     }
 }

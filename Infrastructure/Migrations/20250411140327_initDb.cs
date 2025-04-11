@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialDb : Migration
+    public partial class initDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -86,7 +86,7 @@ namespace Infrastructure.Migrations
                     Index = table.Column<int>(type: "integer", nullable: false),
                     Capacity = table.Column<int>(type: "integer", nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    Price = table.Column<decimal>(type: "numeric", nullable: false)
+                    Price = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -143,10 +143,9 @@ namespace Infrastructure.Migrations
                 name: "Factors",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    IsPaid = table.Column<bool>(type: "boolean", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Amount = table.Column<int>(type: "integer", nullable: false),
+                    State = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -220,11 +219,18 @@ namespace Infrastructure.Migrations
                     { 2, 2, "پیام خرید سرویس - مرحله انتخاب سرویس" },
                     { 3, 3, "پیام تمدید سرویس - مرحله انتخاب سرویس جهت تمدید" },
                     { 4, 4, "پیام سرویس های من - مرحله نمایش سرویس ها" },
-                    { 5, 5, "حجم اضافه - مرحله وارد کردن حجم" },
+                    { 5, 5, "حجم اضافه - انتخاب سرویس جهت افزودن حجم" },
                     { 6, 6, "پیام پلن ها - نمایش تمام پلن ها" },
                     { 7, 7, "پیام کیف پول - نمایش بالانس" },
                     { 8, 8, "پیام پشتیبانی - نمایش ایدی اکانت پشتیبانی" },
-                    { 9, 9, "پیام راهنما" }
+                    { 9, 9, "پیام راهنما" },
+                    { 10, 10, "به منوی اصلی بازگشتید" },
+                    { 11, 11, "نام سرویس: <TITLE>\r\nحجم خریداری شده: <BUYBAND>\r\nحجم باقیمانده: <REMAINBAND>\r\nتاریخ انقضا سرویس: <EXPIRE>" },
+                    { 12, 12, "سرویس انتخاب شده - وارد کردن حجم" },
+                    { 13, 13, "سرویس انتخاب شده جهت تمدید - تعداد ماه" },
+                    { 14, 14, "شارژ ولت انتخاب شده - وارد کردن مبلغ" },
+                    { 15, 15, "مبلغ وارد شده: <AMOUNT>\r\nروش پرداخت را انتخاب کنید:" },
+                    { 16, 16, "روش پرداخت: کارت به کارت\r\nمبلغ: <code><AMOUNT></code>\r\nشماره کارت: <code><CARD></code>\r\nبه شماره کارت بالا واریز کنید و رسید بفرستید" }
                 });
 
             migrationBuilder.InsertData(
@@ -233,13 +239,17 @@ namespace Infrastructure.Migrations
                 values: new object[,]
                 {
                     { 1, "DOMAIN", "https://library98.ir/" },
-                    { 2, "STATUS", "1" }
+                    { 2, "STATUS", "1" },
+                    { 3, "MIN_AMOUNT", "50000" },
+                    { 4, "MAX_AMOUNT", "500000" },
+                    { 5, "RECEIPT_CHATID", "-1002583876730" },
+                    { 6, "CARD", "0000000000000000" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "DiscountId", "FirstName", "JoinDate", "LastName", "Step", "StepData", "UserId", "Username" },
-                values: new object[] { 1, null, "Main", new DateTime(2025, 4, 4, 22, 46, 21, 457, DateTimeKind.Utc).AddTicks(8678), "Admin", 0, "", 7880935437L, "MrMorphling" });
+                values: new object[] { 1, null, "Main", new DateTime(2025, 4, 11, 14, 3, 27, 98, DateTimeKind.Utc).AddTicks(1231), "Admin", 0, "", 7880935437L, "MrMorphling" });
 
             migrationBuilder.InsertData(
                 table: "Admins",

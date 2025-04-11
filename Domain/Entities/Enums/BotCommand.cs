@@ -19,18 +19,16 @@ namespace Domain.Entities.Enums
         Wallet,
         Support,
         Help,
-        AdminPanel,
+        MainMenu,
         //End Message Commands
-
-
         // Callback Commands
-
+        MyServiceDetails,
+        BuyBandwidth,
+        RenewMyService,
+        ChargeWallet,
+        PaymentMethod,
+        CardToCard,
+        Factor
         // End Callback Commands
-
-        // Callback Admin Commands
-        AdminGetServices,
-        AdminAddService,
-        AdminRemoveService
-        // End Callback Admin Commands
     }
 }

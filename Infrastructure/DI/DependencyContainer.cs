@@ -28,6 +28,12 @@ namespace Infrastructure.DI
             string connectionString = configuration.GetConnectionString("Postgres")!;
 
             services.AddHttpClient();
+            services.AddLogging(logging =>
+            {
+                logging.ClearProviders();
+                logging.AddConsole();
+                logging.AddDebug();
+            });
 
             services.AddDbContextPool<BotDbContext>(options =>
             {

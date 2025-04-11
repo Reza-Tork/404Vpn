@@ -17,14 +17,14 @@ namespace Application.Services
         {
             this.userRepository = userRepository;
         }
-        public async Task<Result<Domain.Entities.Bot.User>> CheckUserExists(Telegram.Bot.Types.User user)
+        public async Task<Result<User>> CheckUserExists(Telegram.Bot.Types.User user)
         {
 
-            var dbUser = await userRepository.GetUserById(user.Id);
+            var dbUser = await userRepository.GetUserByUserId(user.Id);
             if (dbUser.IsSuccess)
                 return dbUser;
 
-            var addResult = await userRepository.AddUser(new Domain.Entities.Bot.User()
+            var addResult = await userRepository.AddUser(new User()
             {
                 UserId = user.Id,
                 FirstName = user.FirstName,
@@ -39,14 +39,19 @@ namespace Application.Services
             return addResult;
         }
 
-        public async Task<Result<Domain.Entities.Bot.User>> UpdateUser(Domain.Entities.Bot.User user)
+        public async Task<Result<User>> UpdateUser(User user)
         {
             return await userRepository.UpdateUser(user);
         }
 
-        public async Task<Result<Domain.Entities.Bot.User>> DeleteUser(long userId)
+        public async Task<Result<User>> DeleteUser(long userId)
         {
-            return await userRepository.DeleteUser((await userRepository.GetUserById(userId)).Data);
+            return await userRepository.DeleteUser((await userRepository.GetUserByUserId(userId)).Data!);
+        }
+
+        public async Task<Result<User>> GetUserById(int userId)
+        {
+            return await userRepository.GetUserById(userId);
         }
     }
 }

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(BotDbContext))]
-    [Migration("20250404224621_InitialDb")]
-    partial class InitialDb
+    [Migration("20250411140327_initDb")]
+    partial class initDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -86,6 +86,12 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
+                            Id = 10,
+                            Command = 10,
+                            Message = "به منوی اصلی بازگشتید"
+                        },
+                        new
+                        {
                             Id = 2,
                             Command = 2,
                             Message = "پیام خرید سرویس - مرحله انتخاب سرویس"
@@ -106,7 +112,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 5,
                             Command = 5,
-                            Message = "حجم اضافه - مرحله وارد کردن حجم"
+                            Message = "حجم اضافه - انتخاب سرویس جهت افزودن حجم"
                         },
                         new
                         {
@@ -131,6 +137,42 @@ namespace Infrastructure.Migrations
                             Id = 9,
                             Command = 9,
                             Message = "پیام راهنما"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Command = 11,
+                            Message = "نام سرویس: <TITLE>\r\nحجم خریداری شده: <BUYBAND>\r\nحجم باقیمانده: <REMAINBAND>\r\nتاریخ انقضا سرویس: <EXPIRE>"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Command = 12,
+                            Message = "سرویس انتخاب شده - وارد کردن حجم"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Command = 13,
+                            Message = "سرویس انتخاب شده جهت تمدید - تعداد ماه"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Command = 14,
+                            Message = "شارژ ولت انتخاب شده - وارد کردن مبلغ"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Command = 15,
+                            Message = "مبلغ وارد شده: <AMOUNT>\r\nروش پرداخت را انتخاب کنید:"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Command = 16,
+                            Message = "روش پرداخت: کارت به کارت\r\nمبلغ: <code><AMOUNT></code>\r\nشماره کارت: <code><CARD></code>\r\nبه شماره کارت بالا واریز کنید و رسید بفرستید"
                         });
                 });
 
@@ -166,6 +208,30 @@ namespace Infrastructure.Migrations
                             Id = 2,
                             Key = "STATUS",
                             Value = "1"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Key = "MIN_AMOUNT",
+                            Value = "50000"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Key = "MAX_AMOUNT",
+                            Value = "500000"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Key = "RECEIPT_CHATID",
+                            Value = "-1002583876730"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Key = "CARD",
+                            Value = "0000000000000000"
                         });
                 });
 
@@ -201,20 +267,18 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Bot.Factor", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Amount")
                         .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("numeric");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("IsPaid")
-                        .HasColumnType("boolean");
+                    b.Property<int>("State")
+                        .HasColumnType("integer");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -269,7 +333,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 1,
                             FirstName = "Main",
-                            JoinDate = new DateTime(2025, 4, 4, 22, 46, 21, 457, DateTimeKind.Utc).AddTicks(8678),
+                            JoinDate = new DateTime(2025, 4, 11, 14, 3, 27, 98, DateTimeKind.Utc).AddTicks(1231),
                             LastName = "Admin",
                             Step = 0,
                             StepData = "",
@@ -345,8 +409,8 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
+                    b.Property<long>("Price")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Tags")
                         .IsRequired()
@@ -414,7 +478,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Bot.Factor", b =>
                 {
                     b.HasOne("Domain.Entities.Bot.User", "User")
-                        .WithMany()
+                        .WithMany("UserFactors")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -469,6 +533,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Bot.User", b =>
                 {
                     b.Navigation("Admin");
+
+                    b.Navigation("UserFactors");
 
                     b.Navigation("UserSubscriptions");
 

@@ -9,12 +9,19 @@ namespace Domain.Entities.Bot
 {
     public class Factor
     {
-        public int Id { get; set; }
-        public decimal Amount { get; set; }
-        public bool IsPaid { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public int Amount { get; set; }
+        public FactorState State { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public int UserId { get; set; }
         public User User { get; set; }
+    }
+    public enum FactorState
+    {
+        Pending,
+        Expired,
+        Confirmed,
+        Rejected
     }
 }

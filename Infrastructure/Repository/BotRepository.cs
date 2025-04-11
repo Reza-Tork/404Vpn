@@ -22,6 +22,7 @@ namespace Infrastructure.Repository
         private readonly BotDbContext dbContext;
         private const string MessagesCacheKey = "BotMessages";
         private const string SettingsCacheKey = "BotSettings";
+        private const string FactorsCacheKey = "";
         public BotRepository(BotDbContext dbContext, IMemoryCache cache)
         {
             this.dbContext = dbContext;
@@ -153,6 +154,44 @@ namespace Infrastructure.Repository
             cache.Set(MessagesCacheKey, messages, TimeSpan.FromHours(1));
 
             return Result<ICollection<BotMessage>>.Success(messages);
+        }
+        #endregion
+
+        #region Factor
+        public async Task<Result<Factor>> CreateFactor(Factor factor)
+        {
+            dbContext.Factors.Add(factor);
+            await dbContext.SaveChangesAsync();
+            return Result<Factor>.Success(factor);
+        }
+
+        public async Task<Result<Factor>> UpdateFactor(Factor factor)
+        {
+            dbContext.Factors.Update(factor);
+            await dbContext.SaveChangesAsync();
+            return Result<Factor>.Success(factor);
+        }
+
+        public async Task<Result<Factor>> DeleteFactor(Guid factorId)
+        {
+            var factor = await GetFactor(factorId);
+            if (factor.Data == null || !factor.IsSuccess)
+                return Result<Factor>.Failure("Factor not found!");
+
+            dbContext.Factors.Remove(factor.Data);
+            await dbContext.SaveChangesAsync();
+            return Result<Factor>.Success("Factor removed", factor.Data);
+        }
+
+        public async Task<Result<Factor>> GetFactor(Guid factorId)
+        {
+            var factor = await dbContext.Factors
+                .AsNoTracking()
+                .FirstOrDefaultAsync(f => f.Id == factorId);
+
+            if (factor == null)
+                return Result<Factor>.Failure("Factor not found!");
+            return Result<Factor>.Success("Factor removed", factor);
         }
         #endregion
     }
