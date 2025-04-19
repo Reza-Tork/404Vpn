@@ -38,7 +38,6 @@ namespace Bot
 
             app.MapPost("/webhook", async (HttpContext context, [FromKeyedServices("UpdateHandler")] IUpdateHandler updateHandler, ILogger<Program> logger, Update update) =>
             {
-                logger.LogInformation($"Update received: {update.Type}");
                 if (update != null)
                 {
                     await updateHandler.HandleUpdate(update);

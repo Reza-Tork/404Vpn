@@ -24,6 +24,9 @@ namespace Application.Helpers
         };
         private static Dictionary<string, BotCommand> InlineBotCommands = new()
         {
+            { "BuyService", BotCommand.BuyServiceCallback },
+            { "SelectMonth", BotCommand.SelectMonthCallback },
+            { "SelectTraffic", BotCommand.SelectTrafficCallback },
             { "MyServiceDetails", BotCommand.MyServiceDetails },
             { "BuyBandwidth", BotCommand.BuyBandwidth },
             { "RenewMyService", BotCommand.RenewMyService },
@@ -31,7 +34,12 @@ namespace Application.Helpers
             { "PaymentMethod", BotCommand.PaymentMethod },
             { "CardToCard", BotCommand.CardToCard },
             { "Factor", BotCommand.Factor },
-
+            { "PayFromWallet", BotCommand.PayFromWallet },
+            { "SubscriptionDetails", BotCommand.SubscriptionDetails },
+            { "RenameSubscription", BotCommand.RenameSubscription },
+            { "ChangeService", BotCommand.ChangeService },
+            { "ChangeSubscriptionLink", BotCommand.ChangeSubscriptionLink },
+            { "BackToServices", BotCommand.BackToServices },
         };
         public static bool IsCommand(this string inputText, out BotCommand command)
         {

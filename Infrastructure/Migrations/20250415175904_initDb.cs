@@ -76,6 +76,20 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MonthPlans",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Month = table.Column<int>(type: "integer", nullable: false),
+                    PricePerMonth = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MonthPlans", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Services",
                 columns: table => new
                 {
@@ -119,6 +133,27 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TrafficPlans",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Bandwidth = table.Column<int>(type: "integer", nullable: false),
+                    PricePerGb = table.Column<int>(type: "integer", nullable: false),
+                    MonthPlanId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrafficPlans", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TrafficPlans_MonthPlans_MonthPlanId",
+                        column: x => x.MonthPlanId,
+                        principalTable: "MonthPlans",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Admins",
                 columns: table => new
                 {
@@ -133,27 +168,6 @@ namespace Infrastructure.Migrations
                     table.PrimaryKey("PK_Admins", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Admins_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Factors",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Amount = table.Column<int>(type: "integer", nullable: false),
-                    State = table.Column<int>(type: "integer", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Factors", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Factors_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -210,6 +224,35 @@ namespace Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Factors",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Amount = table.Column<int>(type: "integer", nullable: false),
+                    UniqueKey = table.Column<string>(type: "text", nullable: false),
+                    State = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    UserSubscriptionId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Factors", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Factors_UsersSubscriptions_UserSubscriptionId",
+                        column: x => x.UserSubscriptionId,
+                        principalTable: "UsersSubscriptions",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Factors_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "BotMessages",
                 columns: new[] { "Id", "Command", "Message" },
@@ -220,17 +263,20 @@ namespace Infrastructure.Migrations
                     { 3, 3, "پیام تمدید سرویس - مرحله انتخاب سرویس جهت تمدید" },
                     { 4, 4, "پیام سرویس های من - مرحله نمایش سرویس ها" },
                     { 5, 5, "حجم اضافه - انتخاب سرویس جهت افزودن حجم" },
-                    { 6, 6, "پیام پلن ها - نمایش تمام پلن ها" },
+                    { 6, 6, "TextMessage-PlansMessage" },
                     { 7, 7, "پیام کیف پول - نمایش بالانس" },
                     { 8, 8, "پیام پشتیبانی - نمایش ایدی اکانت پشتیبانی" },
                     { 9, 9, "پیام راهنما" },
                     { 10, 10, "به منوی اصلی بازگشتید" },
-                    { 11, 11, "نام سرویس: <TITLE>\r\nحجم خریداری شده: <BUYBAND>\r\nحجم باقیمانده: <REMAINBAND>\r\nتاریخ انقضا سرویس: <EXPIRE>" },
-                    { 12, 12, "سرویس انتخاب شده - وارد کردن حجم" },
-                    { 13, 13, "سرویس انتخاب شده جهت تمدید - تعداد ماه" },
-                    { 14, 14, "شارژ ولت انتخاب شده - وارد کردن مبلغ" },
-                    { 15, 15, "مبلغ وارد شده: <AMOUNT>\r\nروش پرداخت را انتخاب کنید:" },
-                    { 16, 16, "روش پرداخت: کارت به کارت\r\nمبلغ: <code><AMOUNT></code>\r\nشماره کارت: <code><CARD></code>\r\nبه شماره کارت بالا واریز کنید و رسید بفرستید" }
+                    { 11, 11, "سرویس انتخاب شده: <NAME>\r\nانتخاب مدت زمان سرویس:" },
+                    { 12, 12, "سرویس انتخاب شده: <NAME>\r\nمدت زمان سرویس: <MONTH>\r\nانتخاب ترافیک:" },
+                    { 13, 13, "سرویس انتخاب شده: <NAME>\r\nمدت زمان سرویس: <MONTH>\r\nمقدار ترافیک: <TRAFFIC>\r\nمبلغ نهایی: <PRICE>\r\nفاکتور ساخته شد ، انتخاب روش پرداخت: " },
+                    { 14, 14, "نام نمایشی: <TITLE>\r\nسرویس: <SERVICE>\r\nوضعیت: <STATUS>\r\nیادداشت: <NOTE>" },
+                    { 15, 15, "سرویس انتخاب شده - وارد کردن حجم" },
+                    { 16, 16, "سرویس انتخاب شده جهت تمدید - تعداد ماه" },
+                    { 17, 17, "شارژ ولت انتخاب شده - وارد کردن مبلغ" },
+                    { 18, 18, "مبلغ وارد شده: <AMOUNT>\r\nروش پرداخت را انتخاب کنید:" },
+                    { 19, 19, "روش پرداخت: کارت به کارت\r\nمبلغ: <code><AMOUNT></code>\r\nشماره کارت: <code><CARD></code>\r\nبه شماره کارت بالا واریز کنید و رسید بفرستید" }
                 });
 
             migrationBuilder.InsertData(
@@ -247,14 +293,40 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "MonthPlans",
+                columns: new[] { "Id", "Month", "PricePerMonth" },
+                values: new object[,]
+                {
+                    { 1, 1, 5000 },
+                    { 2, 3, 3000 },
+                    { 3, 6, 2000 }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "DiscountId", "FirstName", "JoinDate", "LastName", "Step", "StepData", "UserId", "Username" },
-                values: new object[] { 1, null, "Main", new DateTime(2025, 4, 11, 14, 3, 27, 98, DateTimeKind.Utc).AddTicks(1231), "Admin", 0, "", 7880935437L, "MrMorphling" });
+                values: new object[] { 1, null, "Main", new DateTime(2025, 4, 15, 17, 59, 3, 515, DateTimeKind.Utc).AddTicks(3298), "Admin", 0, "", 7880935437L, "MrMorphling" });
 
             migrationBuilder.InsertData(
                 table: "Admins",
                 columns: new[] { "Id", "Step", "StepData", "UserId" },
                 values: new object[] { 1, 0, null, 1 });
+
+            migrationBuilder.InsertData(
+                table: "TrafficPlans",
+                columns: new[] { "Id", "Bandwidth", "MonthPlanId", "PricePerGb" },
+                values: new object[,]
+                {
+                    { 1, 15, 1, 3000 },
+                    { 2, 30, 1, 2850 },
+                    { 3, 45, 1, 2750 },
+                    { 4, 30, 2, 2750 },
+                    { 5, 60, 2, 2650 },
+                    { 6, 90, 2, 2500 },
+                    { 7, 150, 3, 2000 },
+                    { 8, 200, 3, 1800 },
+                    { 9, 450, 3, 1500 }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Admins_UserId",
@@ -266,6 +338,16 @@ namespace Infrastructure.Migrations
                 name: "IX_Factors_UserId",
                 table: "Factors",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Factors_UserSubscriptionId",
+                table: "Factors",
+                column: "UserSubscriptionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TrafficPlans_MonthPlanId",
+                table: "TrafficPlans",
+                column: "MonthPlanId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_DiscountId",
@@ -308,10 +390,16 @@ namespace Infrastructure.Migrations
                 name: "Factors");
 
             migrationBuilder.DropTable(
-                name: "UsersSubscriptions");
+                name: "TrafficPlans");
 
             migrationBuilder.DropTable(
                 name: "Wallets");
+
+            migrationBuilder.DropTable(
+                name: "UsersSubscriptions");
+
+            migrationBuilder.DropTable(
+                name: "MonthPlans");
 
             migrationBuilder.DropTable(
                 name: "Services");

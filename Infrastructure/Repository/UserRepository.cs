@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
@@ -74,9 +76,53 @@ namespace Infrastructure.Repository
 
         public async Task<Result<User>> UpdateUser(User user)
         {
-            dbContext.Users.Update(user);
+            var existingUser = await dbContext.Users
+        .Include(u => u.Admin)
+        .Include(u => u.Wallet)
+        .Include(u => u.Discount)
+        .FirstOrDefaultAsync(u => u.Id == user.Id);
+
+            if (existingUser == null)
+                return Result<User>.Failure("User not found!");
+
+            dbContext.Entry(existingUser).CurrentValues.SetValues(user);
+
+            UpdateNavigation(existingUser, user, x => x.Admin);
+            UpdateNavigation(existingUser, user, x => x.Wallet);
+            UpdateNavigation(existingUser, user, x => x.Discount);
+
             await dbContext.SaveChangesAsync();
-            return Result<User>.Success(user);
+            return Result<User>.Success(existingUser);
+        }
+        private void UpdateNavigation<TEntity, TNavigation>(
+            TEntity existingEntity,
+            TEntity newEntity,
+            Expression<Func<TEntity, TNavigation?>> navigationProperty)
+            where TEntity : class
+            where TNavigation : class
+        {
+            var member = (navigationProperty.Body as MemberExpression)?.Member;
+            if (member == null) return;
+
+            var propertyInfo = member as PropertyInfo;
+            if (propertyInfo == null) return;
+
+            var currentValue = propertyInfo.GetValue(existingEntity);
+            var newValue = propertyInfo.GetValue(newEntity);
+
+            if (newValue == null)
+                return;
+
+            if (currentValue == null)
+            {
+                // Attach new value if current is null
+                dbContext.Entry(newValue).State = EntityState.Added;
+                propertyInfo.SetValue(existingEntity, newValue);
+            }
+            else
+            {
+                dbContext.Entry(currentValue).CurrentValues.SetValues(newValue);
+            }
         }
     }
 }

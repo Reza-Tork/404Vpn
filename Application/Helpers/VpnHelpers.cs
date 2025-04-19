@@ -8,10 +8,11 @@ namespace Application.Helpers
 {
     public static class VpnHelpers
     {
-        public static int GbToByte(int value)
+        public static long GbToByte(int value)
         {
-            return value * 1073741824;
+            return (long)value * 1024 * 1024 * 1024;
         }
+
         public static long ToTimestamp(this DateTime time)
         {
             return ((DateTimeOffset)time).ToUnixTimeSeconds();

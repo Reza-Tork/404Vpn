@@ -17,7 +17,7 @@ namespace Domain.Entities.Vpn
         public DateTime ExpireTime { get; set; }
         public DateTime CreationTime { get; set; } = DateTime.UtcNow;
         public Status Status { get; set; } = Status.Pending;
-        
+        public string? Note = string.Empty;
         public int UserId { get; set; }
         public User User { get; set; }
         
@@ -30,6 +30,8 @@ namespace Domain.Entities.Vpn
     {
         Active,
         Pending,
-        Suspend
+        Suspend,
+        Expired,
+        OutOfBandwidth
     }
 }

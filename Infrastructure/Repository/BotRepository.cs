@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
@@ -22,7 +23,7 @@ namespace Infrastructure.Repository
         private readonly BotDbContext dbContext;
         private const string MessagesCacheKey = "BotMessages";
         private const string SettingsCacheKey = "BotSettings";
-        private const string FactorsCacheKey = "";
+        private const string FactorsCacheKey = "Factor";
         public BotRepository(BotDbContext dbContext, IMemoryCache cache)
         {
             this.dbContext = dbContext;
@@ -73,7 +74,7 @@ namespace Infrastructure.Repository
 
         public async Task<Result<BotSetting>> GetSetting(int botSettingId)
         {
-            if (cache.TryGetValue($"{SettingsCacheKey}_{botSettingId}", out BotSetting cachedSettings))
+            if (cache.TryGetValue($"{SettingsCacheKey}_{botSettingId}", out BotSetting? cachedSettings))
                 return Result<BotSetting>.Success(cachedSettings);
 
 
@@ -88,7 +89,7 @@ namespace Infrastructure.Repository
 
         public async Task<Result<BotSetting>> GetSetting(string settingKey)
         {
-            if (cache.TryGetValue($"{SettingsCacheKey}_{settingKey}", out BotSetting cachedSettings))
+            if (cache.TryGetValue($"{SettingsCacheKey}_{settingKey}", out BotSetting? cachedSettings))
                 return Result<BotSetting>.Success(cachedSettings);
 
             var result = await dbContext.BotSettings.AsNoTracking().FirstOrDefaultAsync(x => x.Key == settingKey);
@@ -147,7 +148,7 @@ namespace Infrastructure.Repository
         }
         public async Task<Result<ICollection<BotMessage>>> GetAllBotMessages()
         {
-            if (cache.TryGetValue(MessagesCacheKey, out ICollection<BotMessage> cachedMessages))
+            if (cache.TryGetValue(MessagesCacheKey, out ICollection<BotMessage>? cachedMessages))
                 return Result<ICollection<BotMessage>>.Success(cachedMessages);
 
             var messages = await dbContext.BotMessages.AsNoTracking().ToListAsync();
@@ -162,6 +163,10 @@ namespace Infrastructure.Repository
         {
             dbContext.Factors.Add(factor);
             await dbContext.SaveChangesAsync();
+
+            cache.Set($"{FactorsCacheKey}_{factor.Id}", factor);
+            cache.Set($"{FactorsCacheKey}_{factor.UniqueKey}", factor);
+
             return Result<Factor>.Success(factor);
         }
 
@@ -169,10 +174,14 @@ namespace Infrastructure.Repository
         {
             dbContext.Factors.Update(factor);
             await dbContext.SaveChangesAsync();
+
+            cache.Set($"{FactorsCacheKey}_{factor.Id}", factor);
+            cache.Set($"{FactorsCacheKey}_{factor.UniqueKey}", factor);
+
             return Result<Factor>.Success(factor);
         }
 
-        public async Task<Result<Factor>> DeleteFactor(Guid factorId)
+        public async Task<Result<Factor>> DeleteFactor(int factorId)
         {
             var factor = await GetFactor(factorId);
             if (factor.Data == null || !factor.IsSuccess)
@@ -180,18 +189,40 @@ namespace Infrastructure.Repository
 
             dbContext.Factors.Remove(factor.Data);
             await dbContext.SaveChangesAsync();
+
+            cache.Remove($"{FactorsCacheKey}_{factorId}");
+            cache.Remove($"{FactorsCacheKey}_{factor.Data.UniqueKey}");
+
             return Result<Factor>.Success("Factor removed", factor.Data);
         }
 
-        public async Task<Result<Factor>> GetFactor(Guid factorId)
+        public async Task<Result<Factor>> GetFactor(int factorId)
         {
+            if (cache.TryGetValue($"{FactorsCacheKey}_{factorId}", out Factor? cachedFactor))
+                return Result<Factor>.Success(cachedFactor);
+
             var factor = await dbContext.Factors
+                .Include(x => x.UserSubscription)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(f => f.Id == factorId);
 
             if (factor == null)
                 return Result<Factor>.Failure("Factor not found!");
-            return Result<Factor>.Success("Factor removed", factor);
+            return Result<Factor>.Success(factor);
+        }
+        public async Task<Result<Factor>> GetFactorByUniqueKey(string factorUniqueKey)
+        {
+            if (cache.TryGetValue($"{FactorsCacheKey}_{factorUniqueKey}", out Factor? cachedFactor))
+                return Result<Factor>.Success(cachedFactor);
+
+            var factor = await dbContext.Factors
+                .Include(x => x.UserSubscription)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(f => f.UniqueKey == factorUniqueKey);
+
+            if (factor == null)
+                return Result<Factor>.Failure("Factor not found!");
+            return Result<Factor>.Success(factor);
         }
         #endregion
     }

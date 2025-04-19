@@ -16,7 +16,7 @@ namespace Application.Helpers
             string randomPart = new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
 
-            return $"404Vpn_{randomPart}";
+            return randomPart;
         }
         public static string ConvertToFormUrlEncoded(this object obj)
         {

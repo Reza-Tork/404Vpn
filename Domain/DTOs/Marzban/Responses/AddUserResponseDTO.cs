@@ -12,7 +12,7 @@ namespace Domain.DTOs.Marzban.Responses
         public Admin admin { get; set; }
         public object auto_delete_in_days { get; set; }
         public DateTime created_at { get; set; }
-        public int data_limit { get; set; }
+        public long data_limit { get; set; }
         public string data_limit_reset_strategy { get; set; }
         public Excluded_Inbounds excluded_inbounds { get; set; }
         public object expire { get; set; }
@@ -29,7 +29,7 @@ namespace Domain.DTOs.Marzban.Responses
         public object sub_last_user_agent { get; set; }
         public object sub_updated_at { get; set; }
         public string subscription_url { get; set; }
-        public int used_traffic { get; set; }
+        public long used_traffic { get; set; }
         public string username { get; set; }
     }
 
@@ -37,7 +37,7 @@ namespace Domain.DTOs.Marzban.Responses
     {
         public object discord_webhook { get; set; }
         public bool is_sudo { get; set; }
-        public int telegram_id { get; set; }
+        public object telegram_id { get; set; }
         public string username { get; set; }
         public long users_usage { get; set; }
     }

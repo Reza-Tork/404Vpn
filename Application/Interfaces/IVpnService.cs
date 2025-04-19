@@ -17,8 +17,10 @@ namespace Application.Interfaces
         Task<Result<ApiInfo>> AddApiInfo(ApiInfo apiInfo);
         Task<Result<ApiInfo>> GetApiInfo();
 
-        Task<Result<AddUserResponseDTO>> AddSubscription(int userId, int serviceId, int days, int bandwidth);
+        Task<Result<AddUserResponseDTO>> AddSubscription(int userId, int serviceId, int days, int bandwidth, string[] tags);
         Task<Result<UserSubscription>> GetSubscription(int subId);
+        Task<Result<GetUserDetailsResponse>> GetSubscription(string username);
+        Task<Result<UserSubscription>> UpdateSubscription(UserSubscription userSubscription);
         Task<Result<ICollection<UserSubscription>>> GetUserSubscriptions(int userId);
         Task<Result<ICollection<UserSubscription>>> GetAllSubscriptions(int offset);
 
@@ -27,5 +29,8 @@ namespace Application.Interfaces
         Task<Result<Service>> UpdateService(Service service);
         Task<Result<Service>> GetService(int serviceId);
         Task<Result<ICollection<Service>>> GetAllServices();
+
+        Task<Result<ICollection<MonthPlan>>> GetAllMonthPlans();
+        Task<Result<MonthPlan>> GetMonthPlanById(int Id);
     }
 }

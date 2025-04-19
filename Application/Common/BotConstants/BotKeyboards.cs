@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Helpers;
+using Domain.Entities.Bot;
 using Domain.Entities.Enums;
 using Domain.Entities.Vpn;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -66,7 +68,7 @@ namespace Application.Common.BotConstants
             var distinctedServices = services.DistinctBy(x => x.Index);
 
             while (keyboard.Count <= distinctedServices.Count())
-                keyboard.Add(new List<InlineKeyboardButton>());
+                keyboard.Add([]);
 
             foreach (var service in services)
             {
@@ -81,6 +83,65 @@ namespace Application.Common.BotConstants
                 InlineKeyboard = keyboard
             };
         }
+        public static InlineKeyboardMarkup? MonthPlans(int serviceId, List<MonthPlan> monthPlans)
+        {
+            if (monthPlans.Count < 1)
+                return null;
+            var keyboard = new List<List<InlineKeyboardButton>>();
+
+            foreach (var monthPlan in monthPlans.OrderBy(x => x.Month))
+            {
+                keyboard.Add(new()
+                {
+                    new($"{monthPlan.Month} ماهه")
+                    {
+                        CallbackData = $"SelectMonth|{serviceId}|{monthPlan.Id.ToString().Replace("-", string.Empty)}"
+                    }
+                });
+            }
+            return new InlineKeyboardMarkup()
+            {
+                InlineKeyboard = keyboard
+            };
+        }
+        public static InlineKeyboardMarkup? TrafficPlans(int serviceId, int monthPlanId, List<TrafficPlan> trafficPlans)
+        {
+            if (trafficPlans.Count < 1)
+                return null;
+            var keyboard = new List<List<InlineKeyboardButton>>();
+
+            foreach (var trafficPlan in trafficPlans.OrderBy(x => x.Bandwidth))
+            {
+                keyboard.Add(new()
+                {
+                    new($"{trafficPlan.Bandwidth} گیگ")
+                    {
+                        CallbackData = $"SelectTraffic|{serviceId}|{monthPlanId}|{trafficPlan.Id}"
+                    }
+                });
+            }
+            return new InlineKeyboardMarkup()
+            {
+                InlineKeyboard = keyboard
+            };
+        }
+        public static InlineKeyboardMarkup ServicePayment(int amount, string factorId)
+        {
+            return new InlineKeyboardMarkup()
+            {
+                InlineKeyboard = new List<List<InlineKeyboardButton>>()
+                {
+                    new()
+                    {
+                        new("💰 پرداخت از کیف پول")
+                        {
+                            CallbackData = $"PaymentMethod|{amount}|PayFromWallet|{factorId}"
+                        }
+                    }
+                }
+            };
+        }
+
         public static InlineKeyboardMarkup? UserSubscriptions(List<UserSubscription> userSubscriptions, string callbackData)
         {
             if (userSubscriptions.Count < 1)
@@ -90,7 +151,7 @@ namespace Application.Common.BotConstants
             {
                 keyboard.Add(new()
                 {
-                    new($"{subscription.Service.Title}")
+                    new($"{subscription.Service.Title} | {subscription.Username}")
                     {
                         CallbackData = $"{callbackData}|{subscription.Id}"
                     }
@@ -101,6 +162,46 @@ namespace Application.Common.BotConstants
                 InlineKeyboard = keyboard
             };
         }
+        public static InlineKeyboardMarkup SubscriptionManagement(int subscriptionId)
+        {
+            return new InlineKeyboardMarkup()
+            {
+                InlineKeyboard = new List<List<InlineKeyboardButton>>()
+                {
+                    new()
+                    {
+                        new("تغییر نام سرویس")
+                        {
+                            CallbackData = $"RenameSubscription|{subscriptionId}"
+                        },
+                        new("مشخصات سرویس")
+                        {
+                            CallbackData = $"SubscriptionDetails|{subscriptionId}"
+                        }
+                    },
+                    new()
+                    {
+                        new("تغییر لینک اتصال")
+                        {
+                            CallbackData = $"ChangeSubscriptionLink|{subscriptionId}"
+                        },
+                        new("تغییر پلن سرویس")
+                        {
+                            CallbackData = $"ChangeService|{subscriptionId}"
+                        },
+                    },
+                    new()
+                    {
+                        new("بازگشت")
+                        {
+                            CallbackData = "BackToServices"
+                        }
+                    },
+                },
+            };
+        }
+
+
         public static InlineKeyboardMarkup Wallet(int walletBalance)
         {
             return new InlineKeyboardMarkup()
@@ -145,7 +246,7 @@ namespace Application.Common.BotConstants
             };
         }
 
-        public static InlineKeyboardMarkup SetFactorState(Guid id, int userId)
+        public static InlineKeyboardMarkup SetFactorState(string uniqueKey, int userId)
         {
             return new InlineKeyboardMarkup()
             {
@@ -155,11 +256,11 @@ namespace Application.Common.BotConstants
                     {
                         new("✅ تایید")
                         {
-                            CallbackData = $"Factor|{id}|{userId}|Confirm"
+                            CallbackData = $"Factor|{uniqueKey}|{userId}|Confirm"
                         },
                         new("❌ رد")
                         {
-                            CallbackData = $"Factor|{id}|{userId}|Reject"
+                            CallbackData = $"Factor|{uniqueKey}|{userId}|Reject"
                         }
                     }
                 }

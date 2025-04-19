@@ -39,16 +39,20 @@ namespace Application.Services
             return await botRepository.CreateFactor(factor);
         }
 
-        public async Task<Result<Factor>> DeleteFactor(Guid factorId)
+        public async Task<Result<Factor>> DeleteFactor(int factorId)
         {
             return await botRepository.DeleteFactor(factorId);
         }
 
-        public async Task<Result<Factor>> GetFactor(Guid factorId)
+        public async Task<Result<Factor>> GetFactor(int factorId)
         {
             return await botRepository.GetFactor(factorId);
         }
 
+        public async Task<Result<Factor>> GetFactorByUniqueKey(string factorUniqueKey)
+        {
+            return await botRepository.GetFactorByUniqueKey(factorUniqueKey);
+        }
         public async Task<Result<Factor>> UpdateFactor(Factor factor)
         {
             return await botRepository.UpdateFactor(factor);

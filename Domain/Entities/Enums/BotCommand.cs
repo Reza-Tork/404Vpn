@@ -22,13 +22,22 @@ namespace Domain.Entities.Enums
         MainMenu,
         //End Message Commands
         // Callback Commands
+        BuyServiceCallback,
+        SelectMonthCallback,
+        SelectTrafficCallback,
         MyServiceDetails,
         BuyBandwidth,
         RenewMyService,
         ChargeWallet,
         PaymentMethod,
         CardToCard,
-        Factor
+        PayFromWallet,
+        Factor,
+        SubscriptionDetails,
+        RenameSubscription,
+        ChangeService,
+        ChangeSubscriptionLink,
+        BackToServices
         // End Callback Commands
     }
 }

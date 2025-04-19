@@ -31,20 +31,25 @@ namespace Application.Services
         }
         public async Task HandleUpdate(Update update)
         {
-            switch (update.Type)
+            try
             {
-                case UpdateType.Message:
-                    {
-                        logger.LogInformation("Update type is message");
-                        await messageHandler.HandleUpdate(update);
-                    }
-                    break;
-                case UpdateType.CallbackQuery:
-                    {
-                        logger.LogInformation("Update type is callbackquery");
-                        await callbackHandler.HandleUpdate(update);
-                    }
-                    break;
+                switch (update.Type)
+                {
+                    case UpdateType.Message:
+                        {
+                            await messageHandler.HandleUpdate(update);
+                        }
+                        break;
+                    case UpdateType.CallbackQuery:
+                        {
+                            await callbackHandler.HandleUpdate(update);
+                        }
+                        break;
+                }
+            }
+            catch(Exception ex)
+            {
+                logger.LogError("[Update Handler] {0}", ex.Message);
             }
         }
     }

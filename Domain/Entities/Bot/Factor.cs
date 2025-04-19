@@ -9,13 +9,17 @@ namespace Domain.Entities.Bot
 {
     public class Factor
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public int Id { get; set; }
         public int Amount { get; set; }
+        public string UniqueKey { get; set; }
         public FactorState State { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public int UserId { get; set; }
         public User User { get; set; }
+
+        public int? UserSubscriptionId { get; set; }
+        public UserSubscription? UserSubscription { get; set; }
     }
     public enum FactorState
     {

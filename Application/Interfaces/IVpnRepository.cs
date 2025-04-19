@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Domain.Entities.Bot;
 using Domain.Entities.Vpn;
 
 namespace Application.Interfaces
@@ -25,11 +26,18 @@ namespace Application.Interfaces
         Task<Result<ICollection<Service>>> GetAllServices();
         #endregion
 
+        #region Sub
         Task<Result<UserSubscription>> AddSubscription(UserSubscription subscription);
         Task<Result<UserSubscription>> DeleteSubscription(int subscriptionId);
         Task<Result<UserSubscription>> UpdateSubscription(UserSubscription subscription);
         Task<Result<UserSubscription>> GetSubscriptionById(int subscriptionId);
         Task<Result<ICollection<UserSubscription>>> GetSubscriptionsByUserId(int userId);
         Task<Result<ICollection<UserSubscription>>> GetAllSubscriptions(int offset);
+        #endregion Sub
+
+        #region Plans
+        Task<Result<ICollection<MonthPlan>>> GetAllMonthPlans();
+        Task<Result<MonthPlan>> GetMonthPlanById(int Id);
+        #endregion Plans
     }
 }

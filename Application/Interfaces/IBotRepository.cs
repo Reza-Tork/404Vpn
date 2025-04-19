@@ -24,7 +24,8 @@ namespace Application.Interfaces
 
         Task<Result<Factor>> CreateFactor(Factor factor);
         Task<Result<Factor>> UpdateFactor(Factor factor);
-        Task<Result<Factor>> DeleteFactor(Guid factorId);
-        Task<Result<Factor>> GetFactor(Guid factorId);
+        Task<Result<Factor>> DeleteFactor(int factorId);
+        Task<Result<Factor>> GetFactor(int factorId);
+        Task<Result<Factor>> GetFactorByUniqueKey(string factorUniqueKey);
     }
 }

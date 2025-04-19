@@ -115,7 +115,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 6,
                             Command = 6,
-                            Message = "پیام پلن ها - نمایش تمام پلن ها"
+                            Message = "TextMessage-PlansMessage"
                         },
                         new
                         {
@@ -137,39 +137,57 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 11,
-                            Command = 11,
-                            Message = "نام سرویس: <TITLE>\r\nحجم خریداری شده: <BUYBAND>\r\nحجم باقیمانده: <REMAINBAND>\r\nتاریخ انقضا سرویس: <EXPIRE>"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Command = 12,
-                            Message = "سرویس انتخاب شده - وارد کردن حجم"
-                        },
-                        new
-                        {
-                            Id = 13,
-                            Command = 13,
-                            Message = "سرویس انتخاب شده جهت تمدید - تعداد ماه"
-                        },
-                        new
-                        {
                             Id = 14,
                             Command = 14,
-                            Message = "شارژ ولت انتخاب شده - وارد کردن مبلغ"
+                            Message = "نام نمایشی: <TITLE>\r\nسرویس: <SERVICE>\r\nوضعیت: <STATUS>\r\nیادداشت: <NOTE>"
                         },
                         new
                         {
                             Id = 15,
                             Command = 15,
-                            Message = "مبلغ وارد شده: <AMOUNT>\r\nروش پرداخت را انتخاب کنید:"
+                            Message = "سرویس انتخاب شده - وارد کردن حجم"
                         },
                         new
                         {
                             Id = 16,
                             Command = 16,
+                            Message = "سرویس انتخاب شده جهت تمدید - تعداد ماه"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Command = 17,
+                            Message = "شارژ ولت انتخاب شده - وارد کردن مبلغ"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Command = 18,
+                            Message = "مبلغ وارد شده: <AMOUNT>\r\nروش پرداخت را انتخاب کنید:"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Command = 19,
                             Message = "روش پرداخت: کارت به کارت\r\nمبلغ: <code><AMOUNT></code>\r\nشماره کارت: <code><CARD></code>\r\nبه شماره کارت بالا واریز کنید و رسید بفرستید"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Command = 11,
+                            Message = "سرویس انتخاب شده: <NAME>\r\nانتخاب مدت زمان سرویس:"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Command = 12,
+                            Message = "سرویس انتخاب شده: <NAME>\r\nمدت زمان سرویس: <MONTH>\r\nانتخاب ترافیک:"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Command = 13,
+                            Message = "سرویس انتخاب شده: <NAME>\r\nمدت زمان سرویس: <MONTH>\r\nمقدار ترافیک: <TRAFFIC>\r\nمبلغ نهایی: <PRICE>\r\nفاکتور ساخته شد ، انتخاب روش پرداخت: "
                         });
                 });
 
@@ -264,9 +282,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Bot.Factor", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Amount")
                         .HasColumnType("integer");
@@ -277,14 +297,151 @@ namespace Infrastructure.Migrations
                     b.Property<int>("State")
                         .HasColumnType("integer");
 
+                    b.Property<string>("UniqueKey")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("UserSubscriptionId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
+                    b.HasIndex("UserSubscriptionId");
+
                     b.ToTable("Factors");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Bot.MonthPlan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Month")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PricePerMonth")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MonthPlans");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Month = 1,
+                            PricePerMonth = 5000
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Month = 3,
+                            PricePerMonth = 3000
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Month = 6,
+                            PricePerMonth = 2000
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Entities.Bot.TrafficPlan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Bandwidth")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MonthPlanId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PricePerGb")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MonthPlanId");
+
+                    b.ToTable("TrafficPlans");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 7,
+                            Bandwidth = 150,
+                            MonthPlanId = 3,
+                            PricePerGb = 2000
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Bandwidth = 200,
+                            MonthPlanId = 3,
+                            PricePerGb = 1800
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Bandwidth = 450,
+                            MonthPlanId = 3,
+                            PricePerGb = 1500
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Bandwidth = 30,
+                            MonthPlanId = 2,
+                            PricePerGb = 2750
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Bandwidth = 60,
+                            MonthPlanId = 2,
+                            PricePerGb = 2650
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Bandwidth = 90,
+                            MonthPlanId = 2,
+                            PricePerGb = 2500
+                        },
+                        new
+                        {
+                            Id = 1,
+                            Bandwidth = 15,
+                            MonthPlanId = 1,
+                            PricePerGb = 3000
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Bandwidth = 30,
+                            MonthPlanId = 1,
+                            PricePerGb = 2850
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Bandwidth = 45,
+                            MonthPlanId = 1,
+                            PricePerGb = 2750
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Bot.User", b =>
@@ -330,7 +487,7 @@ namespace Infrastructure.Migrations
                         {
                             Id = 1,
                             FirstName = "Main",
-                            JoinDate = new DateTime(2025, 4, 11, 14, 3, 27, 98, DateTimeKind.Utc).AddTicks(1231),
+                            JoinDate = new DateTime(2025, 4, 15, 17, 59, 3, 515, DateTimeKind.Utc).AddTicks(3298),
                             LastName = "Admin",
                             Step = 0,
                             StepData = "",
@@ -480,7 +637,24 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.Vpn.UserSubscription", "UserSubscription")
+                        .WithMany()
+                        .HasForeignKey("UserSubscriptionId");
+
                     b.Navigation("User");
+
+                    b.Navigation("UserSubscription");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Bot.TrafficPlan", b =>
+                {
+                    b.HasOne("Domain.Entities.Bot.MonthPlan", "MonthPlan")
+                        .WithMany("TrafficPlans")
+                        .HasForeignKey("MonthPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MonthPlan");
                 });
 
             modelBuilder.Entity("Domain.Entities.Bot.User", b =>
@@ -525,6 +699,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Bot.Discount", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Bot.MonthPlan", b =>
+                {
+                    b.Navigation("TrafficPlans");
                 });
 
             modelBuilder.Entity("Domain.Entities.Bot.User", b =>

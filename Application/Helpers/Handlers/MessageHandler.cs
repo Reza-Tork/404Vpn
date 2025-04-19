@@ -62,6 +62,7 @@ namespace Application.Helpers.Handlers
                         var factor = await botService.CreateFactor(new Factor()
                         {
                             UserId = user.Id,
+                            UniqueKey = StringHelpers.GenerateUsername(8),
                             Amount = int.Parse(user.StepData!),
                             State = FactorState.Pending,
                             CreatedAt = DateTime.UtcNow,
@@ -76,7 +77,7 @@ namespace Application.Helpers.Handlers
 🔹 کاربر: {user.UserId}
 〰️〰️〰️〰️
 ⚙️ کد فاکتور: 
-<code>{factor.Data!.Id.ToString().ToLower().Replace("-", "")}</code>",parseMode: ParseMode.Html, replyMarkup: BotKeyboards.SetFactorState(factor.Data!.Id, user.Id));
+<code>{factor.Data!.UniqueKey}</code>", parseMode: ParseMode.Html, replyMarkup: BotKeyboards.SetFactorState(factor.Data!.UniqueKey, user.Id));
 
                         user.StepData = "";
                         user.Step = Step.None;
@@ -84,7 +85,7 @@ namespace Application.Helpers.Handlers
                         await botClient.SendMessage(chatId, $@"🚀 رسید پرداخت  شما ارسال شد.
 ▫️ پس از تایید توسط مدیریت مبلغ به کیف پول شما واریز خواهد شد.
 
-⚙️ کد فاکتور: <code>{factor.Data!.Id.ToString().ToLower().Replace("-", "")}</code>", ParseMode.Html, replyMarkup: BotKeyboards.Main());
+⚙️ کد فاکتور: <code>{factor.Data!.UniqueKey}</code>", ParseMode.Html, replyMarkup: BotKeyboards.Main());
                     }
                     break;
             }
@@ -114,7 +115,7 @@ namespace Application.Helpers.Handlers
                     case Domain.Entities.Enums.BotCommand.BuyService:
                         {
                             var allServices = await vpnService.GetAllServices();
-                            if (allServices.Data == null || !allServices.IsSuccess)
+                            if (allServices.Data is null || !allServices.IsSuccess || allServices.Data.Count < 1)
                             {
                                 await botClient.SendMessage(chatId, "❌ در حال حاضر سرویسی برای فروش موجود نیست!", replyMarkup: BotKeyboards.Main());
                                 return;
@@ -139,13 +140,45 @@ namespace Application.Helpers.Handlers
                                 return;
                             }
 
-                            var subscriptionsKeyboard = BotKeyboards.UserSubscriptions([.. allSubscriptions.Data], callbackData);
+                            var subscriptionsKeyboard = BotKeyboards.UserSubscriptions([.. allSubscriptions.Data.OrderBy(x => x.CreationTime)], callbackData);
                             await botClient.SendMessage(chatId, commandData.Message, replyMarkup: subscriptionsKeyboard);
                         }
                         break;
                     case Domain.Entities.Enums.BotCommand.Wallet:
                         {
                             await botClient.SendMessage(chatId, commandData.Message, parseMode: ParseMode.Html, replyMarkup: BotKeyboards.Wallet(user.Wallet.Balance));
+                        }
+                        break;
+                    case Domain.Entities.Enums.BotCommand.Plans:
+                        {
+                            var result = await vpnService.GetAllMonthPlans();
+
+                            if (!result.IsSuccess || result.Data is null || result.Data.Count == 0)
+                            {
+                                await botClient.SendMessage(chatId, "❌  پلنی جهت فروش وجود ندارد");
+                                return;
+                            }
+
+                            var messageBuilder = new StringBuilder(
+                                "📣 لیست تعرفه سرویس های 404 نت\n\n" +
+                                "📌 شما میتوانید قبل از خرید سرویس تعرفه تمامی سرویس های موجود را مشاهده کنید و طبق آن اقدام به خرید سرویس کنید\n"
+                            );
+
+                            foreach (var plan in result.Data.OrderBy(x => x.Month))
+                            {
+                                messageBuilder.AppendLine($"\n🕰 سرویس های {plan.Month} ماهه 👇");
+
+                                for (int i = 0; i < plan.TrafficPlans.Count; i++)
+                                {
+                                    var trafficPlan = plan.TrafficPlans.OrderBy(x => x.Bandwidth).ToList()[i];
+                                    var prefix = (i % 2 == 0) ? "🔸" : "🔹";
+                                    var totalPrice = (trafficPlan.Bandwidth * trafficPlan.PricePerGb) + (plan.PricePerMonth * plan.Month) + 5000;
+
+                                    messageBuilder.AppendLine($"{prefix} {trafficPlan.Bandwidth} گیگ | {totalPrice:N0} تومان");
+                                }
+                            }
+
+                            await botClient.SendMessage(chatId, messageBuilder.ToString());
                         }
                         break;
                     default:

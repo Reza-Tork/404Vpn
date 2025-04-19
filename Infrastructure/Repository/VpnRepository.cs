@@ -5,9 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
 using Application.Interfaces;
+using Domain.Entities.Bot;
 using Domain.Entities.Vpn;
 using Infrastructure.DbContext;
 using Microsoft.EntityFrameworkCore;
+using Telegram.Bot.Types;
 
 namespace Infrastructure.Repository
 {
@@ -45,7 +47,7 @@ namespace Infrastructure.Repository
         public async Task<Result<ICollection<ApiInfo>>> GetAllApiInfos()
         {
             var apiInfos = await dbContext.ApiInfos.AsNoTracking().ToListAsync();
-            return Result<ICollection<ApiInfo>>.Success("Ok", apiInfos);
+            return Result<ICollection<ApiInfo>>.Success(apiInfos);
         }
 
         public async Task<Result<ApiInfo>> DeleteApiInfo(int apiInfoId)
@@ -134,7 +136,10 @@ namespace Infrastructure.Repository
 
         public async Task<Result<UserSubscription>> GetSubscriptionById(int subscriptionId)
         {
-            var result = await dbContext.UsersSubscriptions.AsNoTracking().FirstOrDefaultAsync(x => x.Id == subscriptionId);
+            var result = await dbContext.UsersSubscriptions
+                .Include(x => x.Service)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == subscriptionId);
             if (result != null)
                 return Result<UserSubscription>.Success("Service founded!", result);
             return Result<UserSubscription>.Failure("No service founded!");
@@ -164,5 +169,28 @@ namespace Infrastructure.Repository
             return Result<ICollection<UserSubscription>>.Success("Ok", services);
         }
         #endregion
+
+        public async Task<Result<ICollection<MonthPlan>>> GetAllMonthPlans()
+        {
+            var result = await dbContext.MonthPlans
+                .Include(x => x.TrafficPlans)
+                .AsNoTracking()
+                .ToListAsync();
+
+            if (result != null)
+                return Result<ICollection<MonthPlan>>.Success(result);
+            return Result<ICollection<MonthPlan>>.Failure("No plan founded!");
+        }
+        public async Task<Result<MonthPlan>> GetMonthPlanById(int Id)
+        {
+            var plan = await dbContext.MonthPlans
+                .Include(x => x.TrafficPlans)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == Id);
+            if (plan != null)
+                return Result<MonthPlan>.Success(plan);
+
+            return Result<MonthPlan>.Failure("No plan founded!");
+        }
     }
 }
