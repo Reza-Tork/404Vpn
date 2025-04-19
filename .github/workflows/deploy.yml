@@ -2,7 +2,7 @@ name: Deploy Bot to Ubuntu Server
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build-and-deploy:
