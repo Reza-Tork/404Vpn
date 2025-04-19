@@ -26,8 +26,23 @@ jobs:
         host: ${{ secrets.SERVER_IP }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.DEPLOY_SSH_KEY }}
-        source: "./publish"
+        source: "./publish/**"
         target: "/root/vpnbot"
+        rm: true  # Remove existing files before copy
+
+    - name: Install .NET Runtime on Server (if needed)
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.DEPLOY_SSH_KEY }}
+        script: |
+          if ! command -v dotnet &> /dev/null; then
+            wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+            sudo dpkg -i packages-microsoft-prod.deb
+            sudo apt-get update
+            sudo apt-get install -y dotnet-runtime-8.0
+          fi
 
     - name: Restart app via SSH
       uses: appleboy/ssh-action@master
@@ -36,4 +51,6 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.DEPLOY_SSH_KEY }}
         script: |
+          sudo systemctl daemon-reload
           sudo systemctl restart MyVpn.service
+          sudo systemctl status MyVpn.service
