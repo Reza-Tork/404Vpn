@@ -35,6 +35,7 @@ namespace Application.Common.BotConstants
             return new ReplyKeyboardMarkup()
             {
                 ResizeKeyboard = true,
+                InputFieldPlaceholder = "🚀 یه گزینه رو انتخاب کن",
                 Keyboard = new List<List<KeyboardButton>>()
                 {
                     new()

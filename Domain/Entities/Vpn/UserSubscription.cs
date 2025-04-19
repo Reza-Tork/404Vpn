@@ -13,6 +13,7 @@ namespace Domain.Entities.Vpn
         public int Id { get; set; }
 
         public string Username { get; set; }
+        public string? Title { get; set; }
         public int Bandwidth { get; set; }
         public DateTime ExpireTime { get; set; }
         public DateTime CreationTime { get; set; } = DateTime.UtcNow;

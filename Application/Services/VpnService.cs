@@ -123,7 +123,7 @@ namespace Application.Services
             return await _vpnRepository.AddApiInfo(apiInfo);
         }
 
-        public async Task<Result<AddUserResponseDTO>> AddSubscription(int userId, int serviceId, int days, int bandwidth, string[] tags)
+        public async Task<Result<AddUserResponseDTO>> AddSubscription(int userId, int serviceId, string username, int days, int bandwidth, string[] tags)
         {
             var _httpClient = _httpClientFactory.CreateClient();
             var domainResult = await _botService.GetSetting("DOMAIN");
@@ -142,7 +142,7 @@ namespace Application.Services
             var requestDto = new AddUserRequestDTO()
             {
                 data_limit = bytes,
-                username = StringHelpers.GenerateUsername(),
+                username = username,
                 expire = DateTime.UtcNow.AddDays(days).ToTimestamp(),
                 inbounds = new AddUserRequestDTO.Inbounds()
                 {
@@ -206,6 +206,7 @@ namespace Application.Services
             }
             else
             {
+                logger.LogError("[Marzban] {0}", await addSubResult.Content.ReadAsStringAsync());
                 return Result<GetUserDetailsResponse>.Failure("An error has occured");
             }
         }

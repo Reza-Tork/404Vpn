@@ -109,7 +109,9 @@ namespace Application.Helpers.Handlers
                                 user.StepData = "";
                                 await userService.UpdateUser(user);
                             }
-                            await botClient.SendMessage(chatId, commandData.Message, parseMode: ParseMode.Html, replyMarkup: BotKeyboards.Main());
+                            var returnMessage = commandData.Message
+                                .Replace("<NAME>", $"{user.FirstName} {user.LastName}");
+                            await botClient.SendMessage(chatId, returnMessage, parseMode: ParseMode.Html, replyMarkup: BotKeyboards.Main());
                         }
                         break;
                     case Domain.Entities.Enums.BotCommand.BuyService:
@@ -133,14 +135,22 @@ namespace Application.Helpers.Handlers
                                 Domain.Entities.Enums.BotCommand.RenewService => MessageExtractor.GetCallbackData(Domain.Entities.Enums.BotCommand.RenewMyService)
                             };
 
-                            var allSubscriptions = await vpnService.GetUserSubscriptions(user.Id);
-                            if (!allSubscriptions.IsSuccess || allSubscriptions.Data == null || allSubscriptions.Data.Count == 0)
+                            var allSubscriptionsResult = await vpnService.GetUserSubscriptions(user.Id);
+                            var allServices = allSubscriptionsResult.Data;
+                            if (!allSubscriptionsResult.IsSuccess || allServices is null || allServices.Count == 0)
                             {
-                                await botClient.SendMessage(chatId, "❌ شما سرویس فعالی ندارید", parseMode: ParseMode.Html, replyMarkup: BotKeyboards.Main());
+                                await botClient.SendMessage(chatId, $@"🚫 در حال حاضر سرویس فعالی نداری، {user.FirstName} {user.LastName} عزیز!
+
+اما نگران نباش! فقط چند کلیک با یه اتصال پرسرعت و بدون محدودیت فاصله داری! 🌍
+الان وقتشه که یکی از پلن‌های پرطرفدارمون رو انتخاب کنی و اینترنت رو همون‌طوری تجربه کنی که باید باشه
+آزاد، سریع و امن! 🔐⚡️
+
+🎯 همین حالا سرویس خودتو از طریق خرید سرویس فعال کن و به دنیای بدون محدودیت وصل شو", parseMode: ParseMode.Html, replyMarkup: BotKeyboards.Main());
                                 return;
                             }
-
-                            var subscriptionsKeyboard = BotKeyboards.UserSubscriptions([.. allSubscriptions.Data.OrderBy(x => x.CreationTime)], callbackData);
+                            if (command == Domain.Entities.Enums.BotCommand.MyServices)
+                                allServices = allServices.Where(x => x.Status == Domain.Entities.Vpn.Status.Active).ToList();
+                            var subscriptionsKeyboard = BotKeyboards.UserSubscriptions([.. allServices.OrderBy(x => x.CreationTime)], callbackData);
                             await botClient.SendMessage(chatId, commandData.Message, replyMarkup: subscriptionsKeyboard);
                         }
                         break;

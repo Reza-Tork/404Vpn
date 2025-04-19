@@ -1,0 +1,39 @@
+name: Deploy Bot to Ubuntu Server
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Publish app
+      run: dotnet publish -c Release -f net8.0 -r linux-x64 --self-contained false -o bin/Release/net8.0/publish/linux-x64
+
+    - name: Copy files to server via SSH
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.DEPLOY_SSH_KEY }}
+        source: "./publish"
+        target: "/root/vpnbot"
+
+    - name: Restart app via SSH
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.DEPLOY_SSH_KEY }}
+        script: |
+          sudo systemctl restart MyVpn.service

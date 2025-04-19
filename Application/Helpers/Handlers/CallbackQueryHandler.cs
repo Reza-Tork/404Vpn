@@ -205,12 +205,25 @@ namespace Application.Helpers.Handlers
                                 return;
                             }
                             var subscriptionDetails = subscriptionResult.Data;
+
+                            var marzbanDetailsResult = await vpnService.GetSubscription(subscriptionDetails.Username);
+                            if (!marzbanDetailsResult.IsSuccess || marzbanDetailsResult.Data is null)
+                            {
+                                await botClient.AnswerCallbackQuery(callbackId, "❌ سرویس درخواست شده یافت نشد", true);
+                                return;
+                            }
+                            var marzbanDetails = marzbanDetailsResult.Data;
                             var note = string.IsNullOrEmpty(subscriptionDetails.Note) ? "تنظیم نشده" : subscriptionDetails.Note;
                             var returnMessage = commandData.Message
                                 .Replace("<TITLE>", $"{subscriptionDetails.Username}")
                                 .Replace("<SERVICE>", $"{subscriptionDetails.Service.Title}")
                                 .Replace("<STATUS>", $"{subscriptionDetails.Status}")
-                                .Replace("<NOTE>", $"{note}");
+                                .Replace("<NOTE>", $"{note}")
+                                .Replace("<CREATE>", $"{subscriptionDetails.CreationTime.ToLocalTime().ToPersianDate()}")
+                                .Replace("<EXPIRE>", $"{subscriptionDetails.ExpireTime.ToLocalTime().ToPersianDate()}")
+                                .Replace("<BANDWIDTH>", $"{subscriptionDetails.Bandwidth} گیگابایت")
+                                .Replace("<USED>", $"{VpnHelpers.ByteToPersianUnit(marzbanDetails.used_traffic)}");
+
                             await botClient.EditMessageText(chatId, message.Id, returnMessage, ParseMode.Html, replyMarkup: BotKeyboards.SubscriptionManagement(subscriptionDetails.Id));
                         }
                         break;
@@ -275,7 +288,7 @@ namespace Application.Helpers.Handlers
                                                             var service = await vpnService.GetService(factor.UserSubscription.ServiceId);
                                                             var days = ((factor.UserSubscription.ExpireTime - DateTime.UtcNow).Days + (DateTime.UtcNow - factor.CreatedAt).Days) + 2;
                                                             var locations = service.Data!.Tags.Contains(',') ? service.Data!.Tags.Split(',') : [service.Data!.Tags];
-                                                            var creationResult = await vpnService.AddSubscription(user.Id, factor.UserSubscription.ServiceId, days, factor.UserSubscription.Bandwidth, locations);
+                                                            var creationResult = await vpnService.AddSubscription(user.Id, factor.UserSubscription.ServiceId,factor.UserSubscription.Username, days, factor.UserSubscription.Bandwidth, locations);
 
                                                             if (creationResult.IsSuccess)
                                                             {

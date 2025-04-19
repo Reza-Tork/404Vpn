@@ -17,7 +17,7 @@ namespace Application.Interfaces
         Task<Result<ApiInfo>> AddApiInfo(ApiInfo apiInfo);
         Task<Result<ApiInfo>> GetApiInfo();
 
-        Task<Result<AddUserResponseDTO>> AddSubscription(int userId, int serviceId, int days, int bandwidth, string[] tags);
+        Task<Result<AddUserResponseDTO>> AddSubscription(int userId, int serviceId, string username, int days, int bandwidth, string[] tags);
         Task<Result<UserSubscription>> GetSubscription(int subId);
         Task<Result<GetUserDetailsResponse>> GetSubscription(string username);
         Task<Result<UserSubscription>> UpdateSubscription(UserSubscription userSubscription);
