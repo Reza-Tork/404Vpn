@@ -9,12 +9,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Create dummy appsettings.json if missing
-      run: |
-        if [ ! -f Bot/appsettings.json ]; then
-          echo '{}' > Bot/appsettings.json
-        fi
-        
     - name: Checkout Code
       uses: actions/checkout@v3
 
